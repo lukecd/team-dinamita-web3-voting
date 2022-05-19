@@ -4,62 +4,15 @@ import OptionsGroup from "/components/OptionsGroup.jsx";
 import Chart from "../components/Chart.jsx";
 import Verification from "../components/Verification";
 import MyDialog from "../components/MyDialog";
+import { proposalsData } from "../utils/proposals.js";
 
-const proposals = [
-  {
-    title: "Topic for the next hackaton",
-    id: 1,
-    timeEnd: 13213213,
-    options: [
-      {
-        name: "optionName1",
-        id: 1,
-        description: "description of optionName1",
-        votes: 2,
-      },
-      {
-        name: "optionName2",
-        id: 2,
-        description: "description of optionName2",
-        votes: 4,
-      },
-      {
-        name: "optionName3",
-        id: 3,
-        description: "description of optionName3",
-        votes: 6,
-      },
-    ],
-  },
-  {
-    title: "Prizes for the next hackaton",
-    id: 2,
-    timeEnd: 1321321,
-    options: [
-      {
-        name: "optionName1",
-        id: 1,
-        description: "description of optionName1",
-        votes: 5,
-      },
-      {
-        name: "optionName2",
-        id: 2,
-        description: "description of optionName2",
-        votes: 8,
-      },
-      {
-        name: "optionName3",
-        id: 3,
-        description: "description of optionName3",
-        votes: 3,
-      },
-    ],
-  },
-];
+const proposals = proposalsData;
 
 const Index = () => {
   const [userHasVoted, setUserHasVoted] = useState(false);
+
+  const [isVerified, setIsVerified] = useState(false);
+  const [loadingVerification, setLoadingVerification] = useState(true);
 
   const handleVote = () => {
     setUserHasVoted(true);
@@ -86,7 +39,12 @@ const Index = () => {
             <section className="w-full">
               <div className="flex justify-between items-center my-4">
                 <h2 className="text-2xl font-medium">Projects being voted:</h2>
-                <Verification />
+                <Verification
+                  isVerified={isVerified}
+                  setIsVerified={setIsVerified}
+                  loadingVerification={loadingVerification}
+                  setLoadingVerification={setLoadingVerification}
+                />
               </div>
               {proposals.map((proposal, index) => (
                 <article
@@ -100,6 +58,8 @@ const Index = () => {
                     <OptionsGroup
                       closeModal={handleVote}
                       options={proposal.options}
+                      isVerified={isVerified}
+                      loadingVerification={loadingVerification}
                     />
                     <Chart options={proposal.options} />
                   </div>

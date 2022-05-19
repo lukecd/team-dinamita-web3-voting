@@ -4,8 +4,16 @@ import Countdown from "react-countdown";
 import { useState } from "react";
 import { RadioGroup } from "@headlessui/react";
 
-export default function OptionsGroup({ closeModal, options, className }) {
+export default function OptionsGroup({
+  closeModal,
+  options,
+  className,
+  isVerified,
+  loadingVerification,
+}) {
   const [selected, setSelected] = useState(options[0]);
+
+  // console.log(options.find(option => option.id === selected))
 
   return (
     <div className={`w-full ${className}`}>
@@ -13,7 +21,7 @@ export default function OptionsGroup({ closeModal, options, className }) {
         <RadioGroup value={selected} onChange={setSelected}>
           <RadioGroup.Label className="sr-only">Server size</RadioGroup.Label>
           <div className="space-y-3">
-            {options.map((option) => (
+            {options.map(option => (
               <RadioGroup.Option
                 key={option.name}
                 value={option.id}
@@ -23,9 +31,7 @@ export default function OptionsGroup({ closeModal, options, className }) {
                       ? "ring-2 ring-white ring-opacity-60 ring-offset-2 ring-offset-sky-300"
                       : ""
                   }
-                  ${
-                    checked ? "bg-sky-900 bg-opacity-75 text-white" : "bg-white"
-                  }
+                  ${checked ? "bg-sky-900 bg-opacity-75 text-white" : "bg-white"}
                     relative flex cursor-pointer rounded-lg px-5 py-3.5 shadow-md focus:outline-none`
                 }
               >
@@ -44,9 +50,7 @@ export default function OptionsGroup({ closeModal, options, className }) {
                           </RadioGroup.Label>
                           <RadioGroup.Description
                             as="span"
-                            className={`inline ${
-                              checked ? "text-sky-100" : "text-gray-500"
-                            }`}
+                            className={`inline ${checked ? "text-sky-100" : "text-gray-500"}`}
                           >
                             <span className="mr-8">{option.description}</span>
                             {/* <span>votes: {option.votes}</span> */}
@@ -66,12 +70,45 @@ export default function OptionsGroup({ closeModal, options, className }) {
           </div>
         </RadioGroup>
         <div className="flex justify-between mt-5">
-          <button
-            // onClick={props.closeModal}
-            className="font-semibold w-36 py-2 border-[2px] rounded-lg bg-[rgba(153,102,255,0.35)] border-[rgb(153,102,255)]/[1] hover:bg-[rgba(126,69,241,0.35)] hover:border-[rgb(127,63,255)]/[1]"
-          >
-            Vote!
-          </button>
+          {!loadingVerification && isVerified && (
+            <button
+              onClick={() => {
+                isVerified ? alert("vota dale") : alert("no podes vota");
+              }}
+              title="hola"
+              className="font-semibold w-36 py-2 border-[2px] rounded-lg
+                      bg-[rgba(153,102,255,0.35)] border-[rgb(153,102,255)]/[1]
+                      hover:bg-[rgba(126,69,241,0.35)] hover:border-[rgb(127,63,255)]/[1]"
+            >
+              Vote!
+            </button>
+          )}
+          {!loadingVerification && !isVerified && (
+            <button
+              title="hola"
+              onClick={() => {
+                isVerified ? alert("vota dale") : alert("no podes vota");
+              }}
+              className="font-semibold w-36 py-2 border-[2px] rounded-lg
+                      bg-[rgba(153,102,255,0.35)] border-[rgb(153,102,255)]/[1]
+                      hover:bg-[rgba(126,69,241,0.35)] hover:border-[rgb(127,63,255)]/[1]"
+            >
+              Vote!
+            </button>
+          )}
+          {loadingVerification && (
+            <button
+              title="hola"
+              onClick={() => {
+                isVerified ? alert("vota dale") : alert("no podes vota");
+              }}
+              className="font-semibold w-36 py-2 border-[2px] rounded-lg
+                      bg-[rgba(153,102,255,0.35)] border-[rgb(153,102,255)]/[1]
+                      hover:bg-[rgba(126,69,241,0.35)] hover:border-[rgb(127,63,255)]/[1]"
+            >
+              Vote!
+            </button>
+          )}
           <div className="font-semibold py-2 px-4 border-[2px] rounded-lg bg-[rgba(63,234,234,0.5)]  border-[rgb(75,192,192)]/[1]">
             <p>Time left: {<Countdown date={Date.now() + 1000000} />}</p>
           </div>
