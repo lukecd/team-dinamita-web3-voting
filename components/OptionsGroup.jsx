@@ -1,7 +1,10 @@
+import React from "react";
+import ReactDOM from "react-dom";
+import Countdown from "react-countdown";
 import { useState } from "react";
 import { RadioGroup } from "@headlessui/react";
 
-export default function OptionsGroup({ options, className }) {
+export default function OptionsGroup({ closeModal, options, className }) {
   const [selected, setSelected] = useState(options[0]);
 
   return (
@@ -9,7 +12,7 @@ export default function OptionsGroup({ options, className }) {
       <div className="mx-auto w-full max-w-md">
         <RadioGroup value={selected} onChange={setSelected}>
           <RadioGroup.Label className="sr-only">Server size</RadioGroup.Label>
-          <div className="space-y-2">
+          <div className="space-y-3">
             {options.map((option) => (
               <RadioGroup.Option
                 key={option.name}
@@ -23,12 +26,12 @@ export default function OptionsGroup({ options, className }) {
                   ${
                     checked ? "bg-sky-900 bg-opacity-75 text-white" : "bg-white"
                   }
-                    relative flex cursor-pointer rounded-lg px-5 py-4 shadow-md focus:outline-none`
+                    relative flex cursor-pointer rounded-lg px-5 py-3.5 shadow-md focus:outline-none`
                 }
               >
                 {({ active, checked }) => (
                   <>
-                    <div className="flex w-full items-center justify-between">
+                    <div className="flex w-full items-center justify-between ">
                       <div className="flex items-center">
                         <div className="text-sm">
                           <RadioGroup.Label
@@ -46,7 +49,7 @@ export default function OptionsGroup({ options, className }) {
                             }`}
                           >
                             <span className="mr-8">{option.description}</span>
-                            <span>votes: {option.votes}</span>
+                            {/* <span>votes: {option.votes}</span> */}
                           </RadioGroup.Description>
                         </div>
                       </div>
@@ -62,6 +65,17 @@ export default function OptionsGroup({ options, className }) {
             ))}
           </div>
         </RadioGroup>
+        <div className="flex justify-between mt-5">
+          <button
+            // onClick={props.closeModal}
+            className="font-semibold w-36 py-2 border-[2px] rounded-lg bg-[rgba(153,102,255,0.35)] border-[rgb(153,102,255)]/[1] hover:bg-[rgba(126,69,241,0.35)] hover:border-[rgb(127,63,255)]/[1]"
+          >
+            Vote!
+          </button>
+          <div className="font-semibold py-2 px-4 border-[2px] rounded-lg bg-[rgba(63,234,234,0.5)]  border-[rgb(75,192,192)]/[1]">
+            <p>Time left: {<Countdown date={Date.now() + 1000000} />}</p>
+          </div>
+        </div>
       </div>
     </div>
   );
