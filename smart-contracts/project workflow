@@ -1,0 +1,7 @@
+
+1. create Web3Citizen contract
+2. mint as many NFTs as we want, but only one NFT per msg.sender
+3. Create a Ballot passing in a. list of Proposals b. Address of Web3Citizen contract
+4. Register to vote by calling Ballot.registerToVote(); NOTE: NEW STEP
+4. Call Ballot.vote() and verify msg.sender owns a Web3Citizen NFT (call Web3Citizen.balanceOf(msg.sender))
+5. Ballot calls Web3Citizen.vote() to update the NFT
