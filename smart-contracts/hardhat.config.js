@@ -8,7 +8,8 @@ module.exports = {
     mumbai: {
       url: process.env.TESTNET_RPC,
       accounts: [process.env.PRIVATE_KEY],
-      blockGasLimit: 50000
+      gas: 6000000,           // Gas sent with each transaction (default: ~6700000)
+      gasPrice: 3000000000,  // 3 gwei (in wei) (default: 100 gwei)
     },
   },
   etherscan: {

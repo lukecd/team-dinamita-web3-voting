@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0
-pragma solidity >=0.7.0 <0.9.0;
+pragma solidity ^0.8.0;
 import "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
 import "hardhat/console.sol";
 import "./Web3Citizen.sol";
@@ -9,7 +9,7 @@ import "./Web3Citizen.sol";
  * @dev Implements voting process along with vote delegation
  * inspired by https://www.youtube.com/watch?v=GB3hiiNNDjk
  */
- // deployed to 
+ // deployed to 0xb802A73EA72393A934619e92DFDB1ccf214109E3
 contract Ballot {
     address private _web3CitizenIdContract;
 
@@ -38,7 +38,8 @@ contract Ballot {
         _web3CitizenIdContract = citizenIDContract;
 
         //TODO: REQUIRE MSG.SENDER IS ACCOUNT HOLDER
-        require(isWeb3Citizen(msg.sender));
+        // For some reason this is giving me a not enough gas error
+        //require(isWeb3Citizen(msg.sender));
 
         for (uint i = 0; i < ballotOptions.length; i++) {
             // create a new Proposal with a vote count of 0
@@ -47,12 +48,20 @@ contract Ballot {
                 voteCount: 0
             }));
         }
-
-        // now we tell the ID contract that a new Ballot has been created
+       // now we tell the ID contract that a new Ballot has been created
+        //Web3Citizen studentIDToken = Web3Citizen(_web3CitizenIdContract);
+        //studentIDToken.addBallotToCollection();
+    }
+    
+    /**
+     * @dev This should be in the constructor, but it's giving me out of gas errors
+     */
+    function addToWeb3Citizen() public {
+       // now we tell the ID contract that a new Ballot has been created
         Web3Citizen studentIDToken = Web3Citizen(_web3CitizenIdContract);
         studentIDToken.addBallotToCollection();
     }
-    
+
     /**
      * @dev Checks to see if specified address owns an earlyStudentNFT
      */

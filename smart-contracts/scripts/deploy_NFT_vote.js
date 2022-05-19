@@ -31,6 +31,9 @@ const main = async () => {
         const ballot = await Ballot.deploy(constructorArgs, nftContract.address);
         await ballot.deployed();
         console.log("Ballot deployed to ", ballot.address);
+        // This should be called from the Ballot constructor when deploying, but I'm getting not enough gas errors
+        // I guess we'll have to do this for now. I'll work on it some more tomorrow.
+        await ballot.addToWeb3Citizen();
 
         // register to vote 
         // NOTE THIS IS A NEW STEP!
