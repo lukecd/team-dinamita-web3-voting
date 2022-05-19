@@ -67,7 +67,7 @@ const index = () => {
         {/* navbar */}
         <nav className="h-20 w-full flex items-center justify-between relative mb-4 border-b-[1px] border-[rgba(255,255,255,0.25)]">
           {/* justify-center */}
-          <h1 className="text-3xl font-medium">Voting system</h1>
+          <h1 className="text-3xl font-medium">NFT-gated Voting system</h1>
           <div className="">
             {/* absolute right-0 */}
             <ConnectButton />
@@ -78,13 +78,17 @@ const index = () => {
           <section className="w-full">
             <h2 className="text-2xl font-medium mb-6">Projects being voted:</h2>
             {proposals.map((proposal, index) => (
-              <article key={index} className="mb-8 pb-2">
+              <article
+                key={index}
+                className={`border-t-[1px] border-[rgba(255,255,255,0.25)] pt-6 mb-8`}
+              >
                 <h3 className="text-lg font-medium">
                   {proposal.id}# - {proposal.title}
                 </h3>
-                <div className="h-full w-full flex items-center border-b-[1px] border-[rgba(255,255,255,0.25)]">
+                <div className=" h-full w-full flex items-center ">
                   <OptionsGroup options={proposal.options} />
                   <Chart options={proposal.options} />
+                  {/* que onda puto */}
                 </div>
               </article>
             ))}

@@ -51,8 +51,8 @@ export default function Chart({ options }) {
     ],
   };
 
-  const ancho = windowSize.width >= 1440 ? 900 : 350;
-  const alto = windowSize.height >= 900 ? 900 : 350;
+  const ancho = windowSize.width >= 1440 ? 1500 : 350;
+  const alto = windowSize.height >= 900 ? 1500 : 350;
 
   return (
     <div className=" w-full h-full">
