@@ -20,10 +20,6 @@ export default function Chart({ options }) {
     handleResize();
   }, []);
 
-  useEffect(() => {
-    console.log(windowSize);
-  }, [windowSize]);
-
   const data = {
     labels: options.map((option) => option.name),
     datasets: [

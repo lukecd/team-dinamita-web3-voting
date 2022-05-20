@@ -61,17 +61,23 @@ const proposals = [
 const Index = () => {
   const [userHasVoted, setUserHasVoted] = useState(false);
 
-  const handleVote = () => {
+  const openModal = () => {
     setUserHasVoted(true);
+  };
+
+  const closeModal = () => {
+    setUserHasVoted(false);
   };
 
   return (
     <>
-      <div className="h-full bg-gradient w-full flex items-center justify-center font-Inter text-white ">
-        {userHasVoted && <MyDialog />}
+      <div className="h-full bg-gradient w-full flex items-center justify-center font-Inter text-white">
         {/* {document && ReactDOM.createPortal(<MyDialog />, div)} */}
         {/* page container -> aprox 80% width.  */}
         <div className="h-100 w-10/12 flex flex-col items-center">
+          {userHasVoted && (
+            <MyDialog isOpen={userHasVoted} closeModal={closeModal} />
+          )}
           {/* navbar */}
           <nav className="h-20 w-full flex items-center justify-between relative border-b-[1px] border-[rgba(255,255,255,0.25)]">
             {/* justify-center */}
@@ -98,7 +104,7 @@ const Index = () => {
                   </h3>
                   <div className=" h-full w-full flex items-center ">
                     <OptionsGroup
-                      closeModal={handleVote}
+                      openModal={openModal}
                       options={proposal.options}
                     />
                     <Chart options={proposal.options} />

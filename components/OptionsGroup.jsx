@@ -4,7 +4,7 @@ import Countdown from "react-countdown";
 import { useState } from "react";
 import { RadioGroup } from "@headlessui/react";
 
-export default function OptionsGroup({ closeModal, options, className }) {
+export default function OptionsGroup({ openModal, options, className }) {
   const [selected, setSelected] = useState(options[0]);
 
   return (
@@ -67,7 +67,7 @@ export default function OptionsGroup({ closeModal, options, className }) {
         </RadioGroup>
         <div className="flex justify-between mt-5">
           <button
-            // onClick={props.closeModal}
+            onClick={openModal}
             className="font-semibold w-36 py-2 border-[2px] rounded-lg bg-[rgba(153,102,255,0.35)] border-[rgb(153,102,255)]/[1] hover:bg-[rgba(126,69,241,0.35)] hover:border-[rgb(127,63,255)]/[1]"
           >
             Vote!
