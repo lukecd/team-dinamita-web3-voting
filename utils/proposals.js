@@ -8,7 +8,7 @@ export const proposalsData = [
         name: "optionName1",
         id: 1,
         description: "description of optionName1",
-        votes: 5,
+        votes: 3254,
       },
       {
         name: "optionName2",
