@@ -5,14 +5,27 @@ import Chart from "../components/Chart.jsx";
 import Verification from "../components/Verification";
 import MyDialog from "../components/MyDialog";
 import { proposalsData } from "../utils/proposals.js";
+import { useAccount } from "wagmi";
 
 const proposals = proposalsData;
 
 const Index = () => {
-  const [userHasVoted, setUserHasVoted] = useState(false);
+  const account = useAccount();
+  const { data, isError, isLoading } = account;
 
+  const [user, setUser] = useState(undefined);
   const [isVerified, setIsVerified] = useState(false);
+  const [userHasVoted, setUserHasVoted] = useState(false);
   const [loadingVerification, setLoadingVerification] = useState(true);
+
+  useEffect(() => {
+    console.log(account);
+    if (data?.address) {
+      setUser(data.address);
+    } else {
+      setUser(undefined);
+    }
+  }, [account]);
 
   const handleVote = () => {
     setUserHasVoted(true);
@@ -40,6 +53,7 @@ const Index = () => {
               <div className="flex justify-between items-center my-4">
                 <h2 className="text-2xl font-medium">Projects being voted:</h2>
                 <Verification
+                  user={user}
                   isVerified={isVerified}
                   setIsVerified={setIsVerified}
                   loadingVerification={loadingVerification}
@@ -54,8 +68,9 @@ const Index = () => {
                   <h3 className="text-xl font-medium">
                     {proposal.id}# - {proposal.title}
                   </h3>
-                  <div className=" h-full w-full flex items-center ">
+                  <div className="h-full w-full flex items-center ">
                     <OptionsGroup
+                      user={user}
                       closeModal={handleVote}
                       options={proposal.options}
                       isVerified={isVerified}

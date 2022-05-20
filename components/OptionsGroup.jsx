@@ -6,6 +6,7 @@ import { RadioGroup } from "@headlessui/react";
 import { Tooltip } from "@nextui-org/react";
 
 export default function OptionsGroup({
+  user,
   closeModal,
   options,
   className,
@@ -14,8 +15,15 @@ export default function OptionsGroup({
 }) {
   const [selected, setSelected] = useState(null);
 
+  const handleSelect = option => {
+    if (user) {
+      setSelected(option);
+    }
+  };
+
   const handleVote = () => {
-    if (selected) {
+    // to be able to vote the user has to be connected, be verified as a holder, and have a selected option.
+    if (user && isVerified && selected) {
       console.log(options[selected - 1]);
       alert(JSON.parse(selected));
     }
@@ -24,7 +32,7 @@ export default function OptionsGroup({
   return (
     <div className={`w-full ${className}`}>
       <div className="mx-auto w-full max-w-md">
-        <RadioGroup value={selected} onChange={setSelected}>
+        <RadioGroup value={selected} onChange={handleSelect}>
           <RadioGroup.Label className="sr-only">Server size</RadioGroup.Label>
           <div className="space-y-3">
             {options.map(option => (
@@ -75,7 +83,7 @@ export default function OptionsGroup({
           </div>
         </RadioGroup>
         <div className="flex justify-between mt-5">
-          {!loadingVerification && isVerified && (
+          {user && !loadingVerification && isVerified && (
             <Tooltip
               shadow={true}
               placement="bottom"
@@ -90,13 +98,16 @@ export default function OptionsGroup({
                 onClick={handleVote}
                 className={`font-semibold w-36 py-2 border-[2px] rounded-lg cursor-default
                       bg-[rgba(153,102,255,0.35)] border-[rgb(153,102,255)]/[1]
-                      ${selected && "!cursor-pointer hover:bg-[rgba(126,69,241,0.35)] hover:border-[rgb(127,63,255)]/[1]"}`}
+                      ${
+                        selected &&
+                        "!cursor-pointer hover:bg-[rgba(126,69,241,0.35)] hover:border-[rgb(127,63,255)]/[1]"
+                      }`}
               >
                 Vote!
               </button>
             </Tooltip>
           )}
-          {!loadingVerification && !isVerified && (
+          {user && !loadingVerification && !isVerified && (
             <Tooltip
               shadow={true}
               placement="bottom"
@@ -115,7 +126,27 @@ export default function OptionsGroup({
               </button>
             </Tooltip>
           )}
-          {loadingVerification && (
+          {user && loadingVerification && (
+            <Tooltip
+              shadow={true}
+              placement="bottom"
+              content={"Verifiyng in the blockchain if you have the NFT.."}
+              css={{
+                borderRadius: "$sm",
+                padding: "$4 $8",
+                fontWeight: "$medium",
+              }}
+            >
+              <button
+                className="cursor-default font-semibold w-36 py-2 border-[2px] rounded-lg
+                      bg-[rgba(153,102,255,0.35)] border-[rgb(153,102,255)]/[1]
+                      hover:bg-[rgba(126,69,241,0.35)] hover:border-[rgb(127,63,255)]/[1]"
+              >
+                Loading...
+              </button>
+            </Tooltip>
+          )}
+          {!user && (
             <Tooltip
               shadow={true}
               placement="bottom"

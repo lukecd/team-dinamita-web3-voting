@@ -1,6 +1,8 @@
+import { Tooltip } from "@nextui-org/react";
 import React, { useState, useEffect } from "react";
 
 const Verification = ({
+  user,
   isVerified,
   setIsVerified,
   loadingVerification,
@@ -26,16 +28,31 @@ const Verification = ({
 
   return (
     <>
-      {loadingVerification && <div className={`${className}`}>Verificating...</div>}
-      {!isVerified && !loadingVerification && (
-        <div className={`${className}`}>You dont hold the NFT</div>
-      )}
-      {isVerified && !loadingVerification && (
-        <div className={`${className} `}>
-          You hold the NFT!
-          {/* <img src="https://img.freepik.com/psd-gratis/nft-logo-3d-render-tecnologia-estilo-blockchain_513203-159.jpg"></img> */}
-        </div>
-      )}
+      <Tooltip
+        shadow={true}
+        placement="bottom"
+        content={
+          isVerified
+            ? `You are a holder of the NFT in your address ${user}`
+            : `You are not a holder of the NFT in your address ${user}`
+        }
+        css={{
+          borderRadius: "$sm",
+          padding: "$4 $8",
+          fontWeight: "$medium",
+        }}
+      >
+        {loadingVerification && <div className={`${className}`}>Verificating...</div>}
+        {!isVerified && !loadingVerification && (
+          <div className={`${className}`}>You dont hold the NFT</div>
+        )}
+        {isVerified && !loadingVerification && (
+          <div className={`${className} `}>
+            You hold the NFT!
+            {/* <img src="https://img.freepik.com/psd-gratis/nft-logo-3d-render-tecnologia-estilo-blockchain_513203-159.jpg"></img> */}
+          </div>
+        )}
+      </Tooltip>
     </>
   );
 };
