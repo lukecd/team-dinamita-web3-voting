@@ -44,7 +44,7 @@ export default function OptionsGroup({
                   ${
                     checked
                       ? "bg-[rgba(255,145,0,0.8)] border-[2px] border-[rgb(255,145,0)]/[1] text-white"
-                      : "bg-white"
+                      : "bg-[#f8e8fd]"
                   }
                     relative flex cursor-pointer rounded-lg px-5 py-3.5 shadow-md focus:outline-0`
                 }
@@ -145,7 +145,7 @@ export default function OptionsGroup({
                 //votation has finished
                 <button
                   className="w-full cursor-default font-semibold py-2 border-[2px] rounded-lg
-                bg-[rgba(255,174,0,0.8)] border-[rgb(255,174,0))]/[1] drop-shadow-[0_0_5px_rgba(255,174,0,1)]"
+                bg-[rgba(255,174,0,0.8)] border-[rgb(255,174,0)]/[1] drop-shadow-[0_0_5px_rgba(255,174,0,1)]"
                 >
                   VOTE HAS ENDED
                 </button>
@@ -172,26 +172,34 @@ export default function OptionsGroup({
               </button>
             </Tooltip>
           )}
-          {!user && (
-            <Tooltip
-              shadow={true}
-              placement="bottom"
-              content={"Verifiyng in the blockchain if you have the NFT.."}
-              css={{
-                borderRadius: "$sm",
-                padding: "$4 $8",
-                fontWeight: "$medium",
-              }}
-            >
-              <button
-                className="cursor-default font-semibold w-36 py-2 border-[2px] rounded-lg
+          {!user &&
+            (isTimeLeft ? (
+              <Tooltip
+                shadow={true}
+                placement="bottom"
+                content={"connect your wallet to emit a vote."}
+                css={{
+                  borderRadius: "$sm",
+                  padding: "$4 $8",
+                  fontWeight: "$medium",
+                }}
+              >
+                <button
+                  className="cursor-default font-semibold w-36 py-2 border-[2px] rounded-lg
                       bg-[rgba(153,102,255,0.35)] border-[rgb(153,102,255)]/[1]
                       hover:bg-[rgba(126,69,241,0.35)] hover:border-[rgb(127,63,255)]/[1]"
+                >
+                  Vote
+                </button>
+              </Tooltip>
+            ) : (
+              <button
+                className="w-full cursor-default font-semibold py-2 border-[2px] rounded-lg
+                bg-[rgba(255,174,0,0.8)] border-[rgb(255,174,0)]/[1] drop-shadow-[0_0_5px_rgba(255,174,0,1)]"
               >
-                LOGIN
+                VOTE HAS ENDED
               </button>
-            </Tooltip>
-          )}
+            ))}
           {isTimeLeft && (
             <div className="cursor-default font-semibold py-2 w-[10.75rem] border-[2px] flex items-center justify-center rounded-lg bg-[rgba(63,234,234,0.5)] border-[rgb(75,192,192)]/[1]">
               <p className="font-semibold">

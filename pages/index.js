@@ -6,6 +6,7 @@ import Verification from "../components/Verification";
 import MyDialog from "../components/MyDialog";
 import { proposalsData } from "../utils/proposals.js";
 import { useAccount } from "wagmi";
+import Informative from "../components/Informative.jsx";
 
 const proposals = proposalsData;
 
@@ -55,20 +56,22 @@ const Index = () => {
             <section className="w-full">
               <div className="flex justify-between items-center my-4">
                 <h2 className="text-2xl font-medium">Projects being voted:</h2>
-                <Verification
-                  user={user}
-                  isVerified={isVerified}
-                  setIsVerified={setIsVerified}
-                  loadingVerification={loadingVerification}
-                  setLoadingVerification={setLoadingVerification}
-                />
+                {user && (
+                  <Verification
+                    user={user}
+                    isVerified={isVerified}
+                    setIsVerified={setIsVerified}
+                    loadingVerification={loadingVerification}
+                    setLoadingVerification={setLoadingVerification}
+                  />
+                )}
               </div>
               {proposals.map((proposal, index) => (
                 <article
                   key={index}
-                  className={`border-t-[1px] border-[rgba(255,255,255,0.25)] pt-6 mb-8`}
+                  className={`border-t-[1px] border-[rgba(255,255,255,0.25)] pt-6 2xl:pt-7 mb-8`}
                 >
-                  <h3 className="text-xl font-medium">
+                  <h3 className="text-xl font-medium mb-3">
                     {proposal.id}# - {proposal.title}
                   </h3>
                   <div className="h-full w-full flex items-center ">
@@ -85,6 +88,12 @@ const Index = () => {
               ))}
             </section>
           </main>
+          <footer className="border-t-[1px] border-white/10 w-[100vw] h-[300px] box-border flex items-center justify-center">
+            <div className="w-10/12 flex items-center justify-between">
+              <Informative />
+              <h1 className="border-2">hola</h1>
+            </div>
+          </footer>
         </div>
       </div>
     </>
