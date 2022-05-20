@@ -1,12 +1,17 @@
 import React from "react";
-import ReactDOM from "react-dom";
 import Countdown from "react-countdown";
 import { useState } from "react";
 import { RadioGroup } from "@headlessui/react";
 import { Tooltip } from "@nextui-org/react";
 
-
-export default function OptionsGroup({user,closeModal, openModal, options, className, isVerified, loadingVerification }) {
+export default function OptionsGroup({
+  user,
+  openModal,
+  options,
+  className,
+  isVerified,
+  loadingVerification,
+}) {
   const [selected, setSelected] = useState(null);
   const [isTimeLeft, setIsTimeLeft] = useState(true);
 
@@ -19,8 +24,9 @@ export default function OptionsGroup({user,closeModal, openModal, options, class
   const handleVote = () => {
     // to be able to vote the user has to be connected, be verified as a holder, and have a selected option.
     if (user && isVerified && selected) {
-      console.log(options[selected - 1]);
-            openModal();
+      // console.log(options[selected - 1]);
+      openModal();
+    }
   };
 
   return (
@@ -29,14 +35,18 @@ export default function OptionsGroup({user,closeModal, openModal, options, class
         <RadioGroup value={selected} onChange={handleSelect}>
           <RadioGroup.Label className="sr-only">Server size</RadioGroup.Label>
           <div className="space-y-3">
-            {options.map((option) => (
+            {options.map(option => (
               <RadioGroup.Option
                 key={option.name}
                 value={option.id}
                 className={({ active, checked }) =>
-                  `${active ? "ring-2 ring-white ring-opacity-60 ring-offset-2 ring-offset-sky-300" : ""}
-                  ${checked ? "bg-sky-900 bg-opacity-75 text-white" : "bg-white"}
-                    relative flex cursor-pointer rounded-lg px-5 py-3.5 shadow-md focus:outline-none`
+                  `${active ? "" : ""}
+                  ${
+                    checked
+                      ? "bg-[rgba(255,145,0,0.8)] border-[2px] border-[rgb(255,145,0)]/[1] text-white"
+                      : "bg-white"
+                  }
+                    relative flex cursor-pointer rounded-lg px-5 py-3.5 shadow-md focus:outline-0`
                 }
               >
                 {({ active, checked }) => (
@@ -46,7 +56,9 @@ export default function OptionsGroup({user,closeModal, openModal, options, class
                         <div className="text-sm">
                           <RadioGroup.Label
                             as="p"
-                            className={`font-medium text-base mb-1  ${checked ? "text-white" : "text-gray-900"}`}
+                            className={`font-medium text-base mb-1  ${
+                              checked ? "text-white" : "text-gray-900"
+                            }`}
                           >
                             {option.name}
                           </RadioGroup.Label>
@@ -74,6 +86,7 @@ export default function OptionsGroup({user,closeModal, openModal, options, class
           {user && !loadingVerification && isVerified && (
             <>
               {isTimeLeft ? (
+                // votation still going on
                 <Tooltip
                   shadow={true}
                   placement="bottom"
@@ -97,9 +110,10 @@ export default function OptionsGroup({user,closeModal, openModal, options, class
                   </button>
                 </Tooltip>
               ) : (
+                // votation has ended => show winner
                 <button
                   className="w-full cursor-default font-semibold py-2 border-[2px] rounded-lg
-                bg-[rgba(229,255,0,0.66)] border-[rgb(229,255,0)]/[1]"
+                bg-[rgba(255,174,0,0.7)] border-[rgb(255,174,0)]/[1] drop-shadow-[0_0_5px_rgba(255,174,0,1)]"
                 >
                   VOTE HAS ENDED
                 </button>
@@ -109,6 +123,7 @@ export default function OptionsGroup({user,closeModal, openModal, options, class
           {user && !loadingVerification && !isVerified && (
             <>
               {isTimeLeft ? (
+                // votation still going on
                 <Tooltip
                   shadow={true}
                   placement="bottom"
@@ -127,9 +142,10 @@ export default function OptionsGroup({user,closeModal, openModal, options, class
                   </button>
                 </Tooltip>
               ) : (
+                //votation has finished
                 <button
                   className="w-full cursor-default font-semibold py-2 border-[2px] rounded-lg
-                bg-[rgba(229,255,0,0.70)] border-[rgb(229,255,0)]/[1]"
+                bg-[rgba(255,174,0,0.8)] border-[rgb(255,174,0))]/[1] drop-shadow-[0_0_5px_rgba(255,174,0,1)]"
                 >
                   VOTE HAS ENDED
                 </button>
@@ -172,14 +188,15 @@ export default function OptionsGroup({user,closeModal, openModal, options, class
                       bg-[rgba(153,102,255,0.35)] border-[rgb(153,102,255)]/[1]
                       hover:bg-[rgba(126,69,241,0.35)] hover:border-[rgb(127,63,255)]/[1]"
               >
-                Loading...
+                LOGIN
               </button>
             </Tooltip>
           )}
           {isTimeLeft && (
             <div className="cursor-default font-semibold py-2 w-[10.75rem] border-[2px] flex items-center justify-center rounded-lg bg-[rgba(63,234,234,0.5)] border-[rgb(75,192,192)]/[1]">
               <p className="font-semibold">
-                Time left: {<Countdown date={Date.now() + 10000} onComplete={() => setIsTimeLeft(false)} />}
+                Time left:{" "}
+                {<Countdown date={Date.now() + 30000} onComplete={() => setIsTimeLeft(false)} />}
               </p>
             </div>
           )}
@@ -193,7 +210,13 @@ function CheckIcon(props) {
   return (
     <svg viewBox="0 0 24 24" fill="none" {...props}>
       <circle cx={12} cy={12} r={12} fill="#fff" opacity="0.2" />
-      <path d="M7 13l3 3 7-7" stroke="#fff" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" />
+      <path
+        d="M7 13l3 3 7-7"
+        stroke="#fff"
+        strokeWidth={1.5}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
     </svg>
   );
 }

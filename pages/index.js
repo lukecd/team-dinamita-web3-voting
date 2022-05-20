@@ -26,12 +26,8 @@ const Index = () => {
       setUser(undefined);
     }
   }, [account]);
-  
-  const openModal = () => {
-    setUserHasVoted(true);
-  };
 
-  const handleVote = () => {
+  const openModal = () => {
     setUserHasVoted(true);
   };
 
@@ -68,14 +64,16 @@ const Index = () => {
                 />
               </div>
               {proposals.map((proposal, index) => (
-                <article key={index} className={`border-t-[1px] border-[rgba(255,255,255,0.25)] pt-6 mb-8`}>
+                <article
+                  key={index}
+                  className={`border-t-[1px] border-[rgba(255,255,255,0.25)] pt-6 mb-8`}
+                >
                   <h3 className="text-xl font-medium">
                     {proposal.id}# - {proposal.title}
                   </h3>
                   <div className="h-full w-full flex items-center ">
                     <OptionsGroup
                       user={user}
-                      closeModal={handleVote}
                       openModal={openModal}
                       options={proposal.options}
                       isVerified={isVerified}
