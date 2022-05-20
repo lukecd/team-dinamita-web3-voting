@@ -5,26 +5,15 @@ import { useState } from "react";
 import { RadioGroup } from "@headlessui/react";
 import { Tooltip } from "@nextui-org/react";
 
-<<<<<<< HEAD
-export default function OptionsGroup({ openModal, options, className }) {
-  const [selected, setSelected] = useState(options[0]);
-=======
-export default function OptionsGroup({
-  closeModal,
-  options,
-  className,
-  isVerified,
-  loadingVerification,
-}) {
+export default function OptionsGroup({ openModal, options, className, isVerified, loadingVerification }) {
   const [selected, setSelected] = useState(null);
+  const [isTimeLeft, setIsTimeLeft] = useState(true);
 
   const handleVote = () => {
     if (selected) {
-      console.log(options[selected - 1]);
-      alert(JSON.parse(selected));
+      openModal();
     }
   };
->>>>>>> 0b662941367c2602a0afd62c43edcce6244c0e4f
 
   return (
     <div className={`w-full ${className}`}>
@@ -32,16 +21,12 @@ export default function OptionsGroup({
         <RadioGroup value={selected} onChange={setSelected}>
           <RadioGroup.Label className="sr-only">Server size</RadioGroup.Label>
           <div className="space-y-3">
-            {options.map(option => (
+            {options.map((option) => (
               <RadioGroup.Option
                 key={option.name}
                 value={option.id}
                 className={({ active, checked }) =>
-                  `${
-                    active
-                      ? "ring-2 ring-white ring-opacity-60 ring-offset-2 ring-offset-sky-300"
-                      : ""
-                  }
+                  `${active ? "ring-2 ring-white ring-opacity-60 ring-offset-2 ring-offset-sky-300" : ""}
                   ${checked ? "bg-sky-900 bg-opacity-75 text-white" : "bg-white"}
                     relative flex cursor-pointer rounded-lg px-5 py-3.5 shadow-md focus:outline-none`
                 }
@@ -53,9 +38,7 @@ export default function OptionsGroup({
                         <div className="text-sm">
                           <RadioGroup.Label
                             as="p"
-                            className={`font-medium text-base mb-1  ${
-                              checked ? "text-white" : "text-gray-900"
-                            }`}
+                            className={`font-medium text-base mb-1  ${checked ? "text-white" : "text-gray-900"}`}
                           >
                             {option.name}
                           </RadioGroup.Label>
@@ -80,55 +63,70 @@ export default function OptionsGroup({
           </div>
         </RadioGroup>
         <div className="flex justify-between mt-5">
-<<<<<<< HEAD
-          <button
-            onClick={openModal}
-            className="font-semibold w-36 py-2 border-[2px] rounded-lg bg-[rgba(153,102,255,0.35)] border-[rgb(153,102,255)]/[1] hover:bg-[rgba(126,69,241,0.35)] hover:border-[rgb(127,63,255)]/[1]"
-          >
-            Vote!
-          </button>
-          <div className="font-semibold py-2 px-4 border-[2px] rounded-lg bg-[rgba(63,234,234,0.5)]  border-[rgb(75,192,192)]/[1]">
-            <p>Time left: {<Countdown date={Date.now() + 1000000} />}</p>
-=======
           {!loadingVerification && isVerified && (
-            <Tooltip
-              shadow={true}
-              placement="bottom"
-              content={selected ? "" : "Select an option to vote"}
-              css={{
-                borderRadius: "$sm",
-                padding: "$4 $8",
-                fontWeight: "$medium",
-              }}
-            >
-              <button
-                onClick={handleVote}
-                className={`font-semibold w-36 py-2 border-[2px] rounded-lg cursor-default
+            <>
+              {isTimeLeft ? (
+                <Tooltip
+                  shadow={true}
+                  placement="bottom"
+                  content={selected ? "" : "Select an option to vote"}
+                  css={{
+                    borderRadius: "$sm",
+                    padding: "$4 $8",
+                    fontWeight: "$medium",
+                  }}
+                >
+                  <button
+                    onClick={handleVote}
+                    className={`font-semibold w-36 py-2 border-[2px] rounded-lg cursor-default
                       bg-[rgba(153,102,255,0.35)] border-[rgb(153,102,255)]/[1]
-                      ${selected && "!cursor-pointer hover:bg-[rgba(126,69,241,0.35)] hover:border-[rgb(127,63,255)]/[1]"}`}
-              >
-                Vote!
-              </button>
-            </Tooltip>
+                      ${
+                        selected &&
+                        "!cursor-pointer hover:bg-[rgba(126,69,241,0.35)] hover:border-[rgb(127,63,255)]/[1]"
+                      }`}
+                  >
+                    Vote!
+                  </button>
+                </Tooltip>
+              ) : (
+                <button
+                  className="w-full cursor-default font-semibold py-2 border-[2px] rounded-lg
+                bg-[rgba(229,255,0,0.66)] border-[rgb(229,255,0)]/[1]"
+                >
+                  VOTE HAS ENDED
+                </button>
+              )}
+            </>
           )}
           {!loadingVerification && !isVerified && (
-            <Tooltip
-              shadow={true}
-              placement="bottom"
-              content={"You need to have the NFT to be able to vote."}
-              css={{
-                borderRadius: "$sm",
-                padding: "$4 $8",
-                fontWeight: "$medium",
-              }}
-            >
-              <button
-                className="cursor-default font-semibold w-36 py-2 border-[2px] rounded-lg
+            <>
+              {isTimeLeft ? (
+                <Tooltip
+                  shadow={true}
+                  placement="bottom"
+                  content={"You need to have the NFT to be able to vote."}
+                  css={{
+                    borderRadius: "$sm",
+                    padding: "$4 $8",
+                    fontWeight: "$medium",
+                  }}
+                >
+                  <button
+                    className="cursor-default font-semibold w-36 py-2 border-[2px] rounded-lg
                       bg-[rgba(153,102,255,0.35)] border-[rgb(153,102,255)]/[1]"
-              >
-                Vote!
-              </button>
-            </Tooltip>
+                  >
+                    Vote!
+                  </button>
+                </Tooltip>
+              ) : (
+                <button
+                  className="w-full cursor-default font-semibold py-2 border-[2px] rounded-lg
+                bg-[rgba(229,255,0,0.70)] border-[rgb(229,255,0)]/[1]"
+                >
+                  VOTE HAS ENDED
+                </button>
+              )}
+            </>
           )}
           {loadingVerification && (
             <Tooltip
@@ -150,10 +148,13 @@ export default function OptionsGroup({
               </button>
             </Tooltip>
           )}
-          <div className="cursor-default font-semibold py-2 w-[10.75rem] border-[2px] flex items-center justify-center rounded-lg bg-[rgba(63,234,234,0.5)] border-[rgb(75,192,192)]/[1]">
-            <p className="font-semibold">Time left: {<Countdown date={Date.now() + 1000000} />}</p>
->>>>>>> 0b662941367c2602a0afd62c43edcce6244c0e4f
-          </div>
+          {isTimeLeft && (
+            <div className="cursor-default font-semibold py-2 w-[10.75rem] border-[2px] flex items-center justify-center rounded-lg bg-[rgba(63,234,234,0.5)] border-[rgb(75,192,192)]/[1]">
+              <p className="font-semibold">
+                Time left: {<Countdown date={Date.now() + 10000} onComplete={() => setIsTimeLeft(false)} />}
+              </p>
+            </div>
+          )}
         </div>
       </div>
     </div>
@@ -164,13 +165,7 @@ function CheckIcon(props) {
   return (
     <svg viewBox="0 0 24 24" fill="none" {...props}>
       <circle cx={12} cy={12} r={12} fill="#fff" opacity="0.2" />
-      <path
-        d="M7 13l3 3 7-7"
-        stroke="#fff"
-        strokeWidth={1.5}
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
+      <path d="M7 13l3 3 7-7" stroke="#fff" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   );
 }

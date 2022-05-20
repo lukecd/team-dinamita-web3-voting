@@ -11,14 +11,14 @@ const proposals = proposalsData;
 const Index = () => {
   const [userHasVoted, setUserHasVoted] = useState(false);
 
-<<<<<<< HEAD
-  const openModal = () => {
-=======
   const [isVerified, setIsVerified] = useState(false);
   const [loadingVerification, setLoadingVerification] = useState(true);
 
+  const openModal = () => {
+    setUserHasVoted(true);
+  };
+
   const handleVote = () => {
->>>>>>> 0b662941367c2602a0afd62c43edcce6244c0e4f
     setUserHasVoted(true);
   };
 
@@ -29,12 +29,9 @@ const Index = () => {
   return (
     <>
       <div className="h-full bg-gradient w-full flex items-center justify-center font-Inter text-white">
-        {/* {document && ReactDOM.createPortal(<MyDialog />, div)} */}
         {/* page container -> aprox 80% width.  */}
         <div className="h-100 w-10/12 flex flex-col items-center">
-          {userHasVoted && (
-            <MyDialog isOpen={userHasVoted} closeModal={closeModal} />
-          )}
+          {userHasVoted && <MyDialog isOpen={userHasVoted} closeModal={closeModal} />}
           {/* navbar */}
           <nav className="h-20 w-full flex items-center justify-between relative border-b-[1px] border-[rgba(255,255,255,0.25)]">
             {/* justify-center */}
@@ -57,10 +54,7 @@ const Index = () => {
                 />
               </div>
               {proposals.map((proposal, index) => (
-                <article
-                  key={index}
-                  className={`border-t-[1px] border-[rgba(255,255,255,0.25)] pt-6 mb-8`}
-                >
+                <article key={index} className={`border-t-[1px] border-[rgba(255,255,255,0.25)] pt-6 mb-8`}>
                   <h3 className="text-xl font-medium">
                     {proposal.id}# - {proposal.title}
                   </h3>
