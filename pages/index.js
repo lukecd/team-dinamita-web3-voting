@@ -16,6 +16,7 @@ const Index = () => {
   const [user, setUser] = useState(undefined);
   const [isVerified, setIsVerified] = useState(false);
   const [userHasVoted, setUserHasVoted] = useState(false);
+  const [openModal, setOpenModal] = useState(false);
   const [loadingVerification, setLoadingVerification] = useState(true);
 
   useEffect(() => {
@@ -27,12 +28,13 @@ const Index = () => {
     }
   }, [account]);
 
-  const openModal = () => {
+  const handleOpenModal = () => {
+    setOpenModal(true);
     setUserHasVoted(true);
   };
 
   const closeModal = () => {
-    setUserHasVoted(false);
+    setOpenModal(false);
   };
 
   return (
@@ -40,11 +42,15 @@ const Index = () => {
       <div className="h-full bg-gradient w-full flex items-center justify-center font-Inter text-white">
         {/* page container -> aprox 80% width.  */}
         <div className="h-100 w-10/12 flex flex-col items-center">
-          {userHasVoted && <MyDialog isOpen={userHasVoted} closeModal={closeModal} />}
+          {openModal && (
+            <MyDialog isOpen={userHasVoted} closeModal={closeModal} />
+          )}
           {/* navbar */}
           <nav className="h-20 w-full flex items-center justify-between relative border-b-[1px] border-[rgba(255,255,255,0.25)]">
             {/* justify-center */}
-            <h1 className="text-3xl font-medium">NFT-gated Voting system</h1>
+            <h1 className="text-3xl font-medium">
+              NFT-gated voting system 🦄🌌
+            </h1>
             <div className="">
               {/* absolute right-0 */}
               <ConnectButton />
@@ -74,10 +80,11 @@ const Index = () => {
                   <div className="h-full w-full flex items-center ">
                     <OptionsGroup
                       user={user}
-                      openModal={openModal}
+                      openModal={handleOpenModal}
                       options={proposal.options}
                       isVerified={isVerified}
                       loadingVerification={loadingVerification}
+                      userHasVoted={userHasVoted}
                     />
                     <Chart options={proposal.options} />
                   </div>

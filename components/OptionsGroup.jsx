@@ -11,11 +11,12 @@ export default function OptionsGroup({
   className,
   isVerified,
   loadingVerification,
+  userHasVoted,
 }) {
   const [selected, setSelected] = useState(null);
   const [isTimeLeft, setIsTimeLeft] = useState(true);
 
-  const handleSelect = option => {
+  const handleSelect = (option) => {
     if (user) {
       setSelected(option);
     }
@@ -24,7 +25,6 @@ export default function OptionsGroup({
   const handleVote = () => {
     // to be able to vote the user has to be connected, be verified as a holder, and have a selected option.
     if (user && isVerified && selected) {
-      // console.log(options[selected - 1]);
       openModal();
     }
   };
@@ -35,7 +35,7 @@ export default function OptionsGroup({
         <RadioGroup value={selected} onChange={handleSelect}>
           <RadioGroup.Label className="sr-only">Server size</RadioGroup.Label>
           <div className="space-y-3">
-            {options.map(option => (
+            {options.map((option) => (
               <RadioGroup.Option
                 key={option.name}
                 value={option.id}
@@ -43,7 +43,7 @@ export default function OptionsGroup({
                   `${active ? "" : ""}
                   ${
                     checked
-                      ? "bg-[rgba(255,145,0,0.8)] border-[2px] border-[rgb(255,145,0)]/[1] text-white"
+                      ? "bg-[rgba(255,174,0,0.7)] border-[2px] border-[rgb(255,174,0)]/[1] drop-shadow-[0_0_5px_rgba(255,174,0,1)] text-white"
                       : "bg-white"
                   }
                     relative flex cursor-pointer rounded-lg px-5 py-3.5 shadow-md focus:outline-0`
@@ -64,7 +64,9 @@ export default function OptionsGroup({
                           </RadioGroup.Label>
                           <RadioGroup.Description
                             as="span"
-                            className={`inline ${checked ? "text-sky-100" : "text-gray-500"}`}
+                            className={`inline ${
+                              checked ? "text-sky-100" : "text-gray-500"
+                            }`}
                           >
                             <span className="mr-8">{option.description}</span>
                           </RadioGroup.Description>
@@ -98,22 +100,19 @@ export default function OptionsGroup({
                   }}
                 >
                   <button
+                    disabled={userHasVoted}
                     onClick={handleVote}
-                    className={`font-semibold w-36 py-2 border-[2px] rounded-lg cursor-default
-                      bg-[rgba(153,102,255,0.35)] border-[rgb(153,102,255)]/[1]
-                      ${
-                        selected &&
-                        "!cursor-pointer hover:bg-[rgba(126,69,241,0.35)] hover:border-[rgb(127,63,255)]/[1]"
-                      }`}
+                    className="font-semibold w-48 py-2 rounded-lg cursor-pointer
+                    bg-[rgba(255,174,0,0.7)] border-[2px] border-[rgb(255,174,0)]/[1] drop-shadow-[0_0_5px_rgba(255,174,0,1)]"
                   >
-                    Vote!
+                    {userHasVoted ? "You're already voted" : "Vote!"}
                   </button>
                 </Tooltip>
               ) : (
                 // votation has ended => show winner
                 <button
-                  className="w-full cursor-default font-semibold py-2 border-[2px] rounded-lg
-                bg-[rgba(255,174,0,0.7)] border-[rgb(255,174,0)]/[1] drop-shadow-[0_0_5px_rgba(255,174,0,1)]"
+                  disabled
+                  className="w-full cursor-default font-semibold py-2 rounded-lg border-[2px] border-[rgb(255,174,0)]/[1] drop-shadow-[0_0_5px_rgba(255,174,0,1)]"
                 >
                   VOTE HAS ENDED
                 </button>
@@ -135,17 +134,18 @@ export default function OptionsGroup({
                   }}
                 >
                   <button
-                    className="cursor-default font-semibold w-36 py-2 border-[2px] rounded-lg
-                      bg-[rgba(153,102,255,0.35)] border-[rgb(153,102,255)]/[1]"
+                    disabled={userHasVoted}
+                    className="font-semibold w-48 py-2 rounded-lg
+                    bg-[rgba(255,174,0,0.7)] border-[2px] border-[rgb(255,174,0)]/[1] drop-shadow-[0_0_5px_rgba(255,174,0,1)] cursor-pointer"
                   >
-                    Vote!
+                    {userHasVoted ? "You're already voted" : "Vote!"}
                   </button>
                 </Tooltip>
               ) : (
                 //votation has finished
                 <button
-                  className="w-full cursor-default font-semibold py-2 border-[2px] rounded-lg
-                bg-[rgba(255,174,0,0.8)] border-[rgb(255,174,0))]/[1] drop-shadow-[0_0_5px_rgba(255,174,0,1)]"
+                  disabled
+                  className="w-full cursor-default font-semibold py-2 rounded-lg border-[2px] border-[rgb(255,174,0)]/[1] drop-shadow-[0_0_5px_rgba(255,174,0,1)]"
                 >
                   VOTE HAS ENDED
                 </button>
@@ -164,9 +164,8 @@ export default function OptionsGroup({
               }}
             >
               <button
-                className="cursor-default font-semibold w-36 py-2 border-[2px] rounded-lg
-                      bg-[rgba(153,102,255,0.35)] border-[rgb(153,102,255)]/[1]
-                      hover:bg-[rgba(126,69,241,0.35)] hover:border-[rgb(127,63,255)]/[1]"
+                className="cursor-default font-semibold w-36 py-2 rounded-lg
+                bg-[rgba(255,174,0,0.7)] border-[2px] border-[rgb(255,174,0)]/[1] drop-shadow-[0_0_5px_rgba(255,174,0,1)]"
               >
                 Loading...
               </button>
@@ -184,19 +183,23 @@ export default function OptionsGroup({
               }}
             >
               <button
-                className="cursor-default font-semibold w-36 py-2 border-[2px] rounded-lg
-                      bg-[rgba(153,102,255,0.35)] border-[rgb(153,102,255)]/[1]
-                      hover:bg-[rgba(126,69,241,0.35)] hover:border-[rgb(127,63,255)]/[1]"
+                className="cursor-default font-semibold w-36 py-2 rounded-lg
+                bg-[rgba(255,174,0,0.7)] border-[2px] border-[rgb(255,174,0)]/[1] drop-shadow-[0_0_5px_rgba(255,174,0,1)]"
               >
                 LOGIN
               </button>
             </Tooltip>
           )}
           {isTimeLeft && (
-            <div className="cursor-default font-semibold py-2 w-[10.75rem] border-[2px] flex items-center justify-center rounded-lg bg-[rgba(63,234,234,0.5)] border-[rgb(75,192,192)]/[1]">
+            <div className="cursor-default font-semibold py-2 w-[10.75rem] flex items-center justify-center rounded-lg drop-shadow-[0_0_5px_rgba(75,192,192,1)]">
               <p className="font-semibold">
                 Time left:{" "}
-                {<Countdown date={Date.now() + 30000} onComplete={() => setIsTimeLeft(false)} />}
+                {
+                  <Countdown
+                    date={Date.now() + 30000}
+                    onComplete={() => setIsTimeLeft(false)}
+                  />
+                }
               </p>
             </div>
           )}
