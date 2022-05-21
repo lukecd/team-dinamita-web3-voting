@@ -20,7 +20,6 @@ const Index = () => {
   const [loadingVerification, setLoadingVerification] = useState(true);
 
   useEffect(() => {
-    console.log(account);
     if (data?.address) {
       setUser(data.address);
     } else {

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Countdown from "react-countdown";
 import { useState } from "react";
 import { RadioGroup } from "@headlessui/react";
@@ -15,6 +15,14 @@ export default function OptionsGroup({
 }) {
   const [selected, setSelected] = useState(null);
   const [isTimeLeft, setIsTimeLeft] = useState(true);
+  const [time, setTime] = useState(0);
+
+  useEffect(() => {
+    const countDownDate = new Date("May 22, 2022 23:59:59").getTime();
+    const now = new Date().getTime();
+
+    setTime(Date.now() + (countDownDate - now));
+  }, []);
 
   const handleSelect = (option) => {
     if (user) {
@@ -194,12 +202,12 @@ export default function OptionsGroup({
             <div className="cursor-default font-semibold py-2 w-[10.75rem] flex items-center justify-center rounded-lg drop-shadow-[0_0_5px_rgba(75,192,192,1)]">
               <p className="font-semibold">
                 Time left:{" "}
-                {
+                {time != 0 && (
                   <Countdown
-                    date={Date.now() + 30000}
+                    date={time}
                     onComplete={() => setIsTimeLeft(false)}
                   />
-                }
+                )}
               </p>
             </div>
           )}
