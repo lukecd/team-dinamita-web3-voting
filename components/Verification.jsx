@@ -1,4 +1,4 @@
-import { Tooltip } from "@nextui-org/react";
+import { Tooltip, Loading } from "@nextui-org/react";
 import React, { useState, useEffect } from "react";
 
 const Verification = ({
@@ -6,12 +6,18 @@ const Verification = ({
   isVerified,
   setIsVerified,
   loadingVerification,
+  loadingMint,
   setLoadingVerification,
+  setLoadingMint,
 }) => {
   const className =
-    "cursor-default border-[2px] rounded-lg px-4 py-2 font-semibold bg-[rgba(153,102,255,0.35)] border-[rgba(153,102,255,1)] hover:bg-[rgba(126,69,241,0.35)] hover:border-[rgba(127,63,255,1)]";
+    "text-center w-44 border-[2px] rounded-lg px-4 py-3 font-semibold bg-[rgba(153,102,255,0.35)] border-[rgba(153,102,255,1)] hover:bg-[rgba(126,69,241,0.35)] hover:border-[rgba(127,63,255,1)]";
 
   const timeout = Math.random() * 4000;
+
+  const mintNFT = () => {
+    setLoadingMint(true);
+  };
 
   useEffect(() => {
     setTimeout(() => {
@@ -43,13 +49,19 @@ const Verification = ({
         }}
       >
         {loadingVerification && (
-          <div className={`${className}`}>Verificating...</div>
+          <div className={`${className} cursor-default`}>Verificating...</div>
         )}
         {!isVerified && !loadingVerification && (
-          <div className={`${className}`}>You dont hold the NFT</div>
+          <button onClick={mintNFT} className={`${className} cursor-pointer`}>
+            {loadingMint ? (
+              <Loading color="secondary" size="sm" />
+            ) : (
+              "Mint the NFT!"
+            )}
+          </button>
         )}
         {isVerified && !loadingVerification && (
-          <div className={`${className} `}>
+          <div className={`${className} cursor-default`}>
             You hold the NFT!
             {/* <img src="https://img.freepik.com/psd-gratis/nft-logo-3d-render-tecnologia-estilo-blockchain_513203-159.jpg"></img> */}
           </div>

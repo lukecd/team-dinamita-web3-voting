@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
+import { useAccount } from "wagmi";
+import { proposalsData } from "../utils/proposals.js";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
+
 import OptionsGroup from "/components/OptionsGroup.jsx";
 import Chart from "../components/Chart.jsx";
 import Verification from "../components/Verification";
 import MyDialog from "../components/MyDialog";
-import { proposalsData } from "../utils/proposals.js";
-import { useAccount } from "wagmi";
 
 const proposals = proposalsData;
 
@@ -18,6 +19,7 @@ const Index = () => {
   const [userHasVoted, setUserHasVoted] = useState(false);
   const [openModal, setOpenModal] = useState(false);
   const [loadingVerification, setLoadingVerification] = useState(true);
+  const [loadingMint, setLoadingMint] = useState(false);
 
   useEffect(() => {
     if (data?.address) {
@@ -66,6 +68,8 @@ const Index = () => {
                   setIsVerified={setIsVerified}
                   loadingVerification={loadingVerification}
                   setLoadingVerification={setLoadingVerification}
+                  loadingMint={loadingMint}
+                  setLoadingMint={setLoadingMint}
                 />
               </div>
               {proposals.map((proposal, index) => (
