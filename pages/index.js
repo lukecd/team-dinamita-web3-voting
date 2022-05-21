@@ -8,7 +8,12 @@ import { proposalsData } from "../utils/proposals.js";
 import { useAccount } from "wagmi";
 import Informative from "../components/Informative.jsx";
 
+
+
 const proposals = proposalsData;
+
+const contractAddress = "0xb802A73EA72393A934619e92DFDB1ccf214109E3";
+const contractABI = abi.abi
 
 const Index = () => {
   const account = useAccount();
@@ -89,7 +94,7 @@ const Index = () => {
             </section>
           </main>
           <footer className="border-t-[1px] border-white/10 w-[100vw] h-[300px] box-border flex items-center justify-center">
-            <div className="w-10/12 flex items-center justify-between">
+            <div className="w-9/12 flex items-center justify-between">
               <Informative />
               <h1 className="border-2">hola</h1>
             </div>
