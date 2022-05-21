@@ -42,7 +42,9 @@ const Verification = ({
           fontWeight: "$medium",
         }}
       >
-        {loadingVerification && <div className={`${className}`}>Verificating...</div>}
+        {loadingVerification && (
+          <div className={`${className}`}>Verificating...</div>
+        )}
         {!isVerified && !loadingVerification && (
           <div className={`${className}`}>You dont hold the NFT</div>
         )}

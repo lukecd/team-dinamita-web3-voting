@@ -40,7 +40,7 @@ export default function Informative() {
     <div className="">
       <div className="mx-auto w-full max-w-md rounded-2xl bg-purple-700/20 border-[2px] border-purple-700/75 py-5">
         {items.map((item, idx) => (
-          <Disclosure key={item.id} className="py-1 px-6">
+          <Disclosure key={idx} className="py-1 px-6">
             {({ open }) => (
               <div>
                 <Disclosure.Button as="div">

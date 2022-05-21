@@ -20,7 +20,8 @@ const main = async () => {
 
         let constructorArgs = [createBytes("gonza"), createBytes("nacho"), createBytes("luke")];
         const Ballot = await hre.ethers.getContractFactory("Ballot");
-        console.log("got contractFactory");
+      console.log("got contractFactory");
+        // calling the ballot constructor with the options and the nft contract address
         const ballot = await Ballot.deploy(constructorArgs, nftContract.address);
         //const ballot = await Ballot.deploy(constructorArgs, '0x652a6302420D94F707b7Ad9Ae6eFc9E849805605');
         console.log("called deploy");

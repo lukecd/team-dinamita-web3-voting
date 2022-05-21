@@ -24,6 +24,8 @@ contract Web3Citizen is ERC721URIStorage {
     //searching mappings uses way less gas than arrays, so we hack a bit
     mapping(address => uint256) public ballotAddresses;
 
+    // @gonza so we here are storing the proposals addresses
+
     constructor() ERC721("Web3Citizen", "W3ID") {
 
     }

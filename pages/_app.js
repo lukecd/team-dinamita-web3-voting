@@ -9,10 +9,11 @@ import {
   darkTheme,
 } from "@rainbow-me/rainbowkit";
 import { chain, createClient, WagmiProvider } from "wagmi";
+
 import { NextUIProvider } from "@nextui-org/react";
 
 const { chains, provider } = configureChains(
-  [chain.mainnet, chain.polygon, chain.polygonMumbai],
+  [chain.polygonMumbai],
   [apiProvider.alchemy(process.env.ALCHEMY_ID), apiProvider.fallback()]
 );
 

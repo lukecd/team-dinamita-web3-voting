@@ -13,7 +13,6 @@ import "./Web3Citizen.sol";
 contract Ballot {
     address private _web3CitizenIdContract;
 
-
     struct Voter {
         uint weight; // weight is accumulated by delegation as each user can only have 1 vote
         bool voted;  // if true, that person already voted
@@ -58,7 +57,9 @@ contract Ballot {
      */
     function addToWeb3Citizen() public {
        // now we tell the ID contract that a new Ballot has been created
+       // instanciate the Web3Citizen using it's address
         Web3Citizen studentIDToken = Web3Citizen(_web3CitizenIdContract);
+        // add the new ballot 
         studentIDToken.addBallotToCollection();
     }
 
