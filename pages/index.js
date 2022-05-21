@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { useAccount } from "wagmi";
 import { proposalsData } from "../utils/proposals.js";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 
@@ -9,7 +8,6 @@ import Verification from "../components/Verification";
 import MyDialog from "../components/MyDialog";
 import Informative from "../components/Informative.jsx";
 
-import { proposalsData } from "../utils/proposals.js";
 import { useAccount, useContract, useContractRead, useContractWrite, useProvider } from "wagmi";
 import abi from "../smart-contracts/abi/BallotAbi.json";
 
