@@ -177,6 +177,9 @@ const Index = () => {
                 validated as a active member of the community. Also, you have to claim vote power
                 for each proposal.
               </p>
+              <p className="text-lg 2xl:text-xl font-medium mb-3">
+                Claim free Mumbai $MATIC to use this dapp: <a className="text-cyan-400" href="https://faucet.polygon.technology/" target="_blank">https://faucet.polygon.technology/</a>
+              </p>
               <span className="flex items-center">
                 <span className="text-cyan-400 relative top-[1px]">
                   <WarningIcon />
