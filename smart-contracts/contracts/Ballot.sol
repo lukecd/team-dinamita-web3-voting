@@ -9,7 +9,7 @@ import "./Web3Citizen.sol";
  * @dev Implements voting process along with vote delegation
  * inspired by https://www.youtube.com/watch?v=GB3hiiNNDjk
  */
- // deployed to 0xb802A73EA72393A934619e92DFDB1ccf214109E3
+ // ballot1 deployed to 0x3ff3efbf39d056c4de0277a2c5fff924a4082807
 contract Ballot {
     address private _web3CitizenIdContract;
 

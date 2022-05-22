@@ -5,22 +5,22 @@ export const proposalsData = [
     timeEnd: 13213213,
     options: [
       {
-        name: "optionName1",
+        name: "option1",
         id: 1,
         description: "description of optionName1",
-        votes: 3213254,
+        votes: 33,
       },
       {
-        name: "optionName2",
+        name: "option2",
         id: 2,
         description: "description of optionName2",
-        votes: 4123123,
+        votes: 44,
       },
       {
-        name: "optionName3",
+        name: "option3",
         id: 3,
         description: "description of optionName3",
-        votes: 324326,
+        votes: 55,
       },
     ],
   },

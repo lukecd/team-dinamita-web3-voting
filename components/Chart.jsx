@@ -21,11 +21,11 @@ export default function Chart({ options }) {
   }, []);
 
   const data = {
-    labels: options.map((option) => option.name),
+    labels: options.map(option => option.name),
     datasets: [
       {
         label: "# of Votes",
-        data: options.map((option) => option.votes),
+        data: options.map(option => option.votes),
         backgroundColor: [
           "rgba(75,192,192,0.5)",
           "rgba(153,102,255,0.5)",

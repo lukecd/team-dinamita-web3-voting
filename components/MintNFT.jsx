@@ -6,13 +6,9 @@ import { useContract, useFeeData, useProvider, useSigner } from "wagmi";
 import abi from "../smart-contracts/artifacts/contracts/Web3Citizen.sol/Web3Citizen.json";
 
 const nftAddress = "0x652a6302420D94F707b7Ad9Ae6eFc9E849805605"; // nft contract
-const nftAbi = abi.abi
-console.log(nftAbi)
+const nftAbi = abi.abi;
 
-const MintNFT = ({ user }) => {
-  const { data: feeData, isError: isErrorFee, isLoading, isLoadingFee } = useFeeData();
-  // console.log(feeData);
-
+const MintNFT = ({ user}) => {
   const [mintingNft, setMintingNft] = useState(false);
   const [mintingNftError, setMintingNftError] = useState(false);
   const [minted, setMinted] = useState(undefined);
@@ -26,12 +22,12 @@ const MintNFT = ({ user }) => {
 
   const mintNft = async () => {
     const data = await nftWithSigner.mint({
-      gasLimit: 2599999
+      gasLimit: 2599999,
     });
-    console.log(data)
-    let receipt = await data.wait()
-    console.log(receipt)
-    return receipt
+    console.log(data);
+    let receipt = await data.wait();
+    console.log(receipt);
+    return receipt;
   };
 
   const handleMintNft = () => {

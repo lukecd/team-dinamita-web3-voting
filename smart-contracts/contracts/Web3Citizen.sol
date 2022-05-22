@@ -15,6 +15,7 @@ contract Web3Citizen is ERC721URIStorage {
     Counters.Counter private _tokenIds;
     uint private nonce;
 
+    // tokenId -> ammount of votes
     mapping(uint256 => uint256) public tokenIdToVoteCount;
     // we only allow 1 NFT per address, this helps us track
     mapping(address => uint256) public addressToTokenId;
@@ -117,12 +118,17 @@ contract Web3Citizen is ERC721URIStorage {
      * @dev Mints an NFT for msg.sender. Since this is an ID, we only allow one NFT per address
      */
     function mint() public {
+        // validates that the adress doesn't have an nft already (tokenId)
         require(addressToTokenId[msg.sender] == 0, "you already have an NFT");
+        // updates this tokenId tracker.
         _tokenIds.increment();
+        // give the new tokenId (new ammount of minted nfts) to the new NFT.
         uint256 newItemId = _tokenIds.current();
         _safeMint(msg.sender, newItemId);
+        // set the ammount of times a nft has been used to vote to 0.
         tokenIdToVoteCount[newItemId] = 0;
         _setTokenURI(newItemId, getTokenURI(newItemId));
+        // assign the nft id to the sender. We save that the sender now has this nft to check later.
         addressToTokenId[msg.sender] = newItemId;
     }   
 
@@ -132,7 +138,12 @@ contract Web3Citizen is ERC721URIStorage {
      * 
      */
     function vote(address votingAddress) public {
+        // validates that the caller is a ballot contract. 
         require(ballotAddresses[msg.sender] == 1, "Only registered Ballot contracts can call Web3Citizen.vote()");
+        
+        // to this point, we know that the user has a nft.
+        // the passed that validation at Ballot vote()
+
         uint256 tokenId = addressToTokenId[votingAddress];
         require(_exists(tokenId), "please use an existing id");
         //TODO only allow Ballot to call

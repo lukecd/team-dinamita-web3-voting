@@ -26,26 +26,36 @@ export default function OptionsGroup({ user, openModal, options }) {
     const data = await contract.registerToVote();
     return data;
   };
+
+  const vote = async (optionName, contract) => {
+    const data = await contract.vote(optionName, {
+      gasLimit: 2599999,
+    });
+    console.log(data);
+    let receipt = await data.wait();
+    console.log(receipt);
+    return receipt;
+  };
   // registerToVote validations -> isWeb3Citizen, !voted
-  useEffect(() => {
-    if (user) {
-      setGetVotePowerLoading(true);
-      getVotePower(ballot1withSigner)
-        .then(result => {
-          console.log("getVotePower ballot1 - successfull!", result);
-          setGetVotePowerError(null);
-          setHasVotePower(true);
-        })
-        .catch(error => {
-          console.log("getVotePower ballot1 - error", error.reason);
-          setGetVotePowerError(error.reason);
-          setHasVotePower(false);
-        })
-        .finally(() => {
-          setGetVotePowerLoading(false);
-        });
-    }
-  }, [user]);
+  // useEffect(() => {
+  //   if (user) {
+  //     setGetVotePowerLoading(true);
+  //     getVotePower(ballot1withSigner)
+  //       .then(result => {
+  //         console.log("getVotePower ballot1 - successfull!", result);
+  //         setGetVotePowerError(null);
+  //         setHasVotePower(true);
+  //       })
+  //       .catch(error => {
+  //         console.log("getVotePower ballot1 - error", error.reason);
+  //         setGetVotePowerError(error.reason);
+  //         setHasVotePower(false);
+  //       })
+  //       .finally(() => {
+  //         setGetVotePowerLoading(false);
+  //       });
+  //   }
+  // }, [user]);
 
   const [selected, setSelected] = useState(null);
   const [isTimeLeft, setIsTimeLeft] = useState(true);
@@ -64,10 +74,18 @@ export default function OptionsGroup({ user, openModal, options }) {
     }
   };
 
-  const handleVote = () => {
+  const handleVote = async () => {
     // to be able to vote the user has to be connected, be verified as a holder, and have a selected option.
-    if (user && hasVotePower && selected) {
-      openModal();
+    if (user && selected) {
+      const selectedOption = await options.find(option => option.id === selected);
+      console.log(selectedOption.name);
+      vote(selectedOption.id, ballot1withSigner)
+        .then(result => {
+          console.log(result);
+        })
+        .catch(error => {
+          console.log(error);
+        });
     }
   };
 
@@ -108,7 +126,9 @@ export default function OptionsGroup({ user, openModal, options }) {
                             as="span"
                             className={`inline ${checked ? "text-sky-100" : "text-gray-500"}`}
                           >
-                            <span className="mr-8">{option.description}</span>
+                            <span className="mr-8">
+                              {option.description} - {option.votes}
+                            </span>
                           </RadioGroup.Description>
                         </div>
                       </div>

@@ -31,16 +31,21 @@ const luke = (
 
 const ballot1Address = "0x3ff3EfbF39d056c4dE0277a2c5FFF924a4082807";
 const ballotAbi = abi;
-const proposals = proposalsData;
 
 const Index = () => {
   // states
+  const proposals = proposalsData;
   const [options, setOptions] = useState([]);
-  proposals[0].options = options;
+  const [loadingOptions, setLoadingOptions] = useState(true);
 
-  const account = useAccount();
-  const { data, isError, isLoading } = account;
+  const { data: accountData, isError, isLoading: isAccountLoading } = useAccount();
   const [user, setUser] = useState(undefined);
+
+  useEffect(() => {
+    if (accountData && !isAccountLoading) {
+      setUser(accountData.address);
+    } else setUser(undefined);
+  }, [accountData]);
 
   // contracts data
   const provider = useProvider();
@@ -54,59 +59,33 @@ const Index = () => {
   // FUNCTIONS
   const getVotes = async (name, contract) => {
     const data = await contract.voteCount(createBytes(name));
-    return data;
+    const votes = await data.toNumber();
+    return votes;
   };
-
-  // USE EFFECTS
-  // save user address
-  useEffect(() => {
-    if (data?.address) {
-      setUser(data.address);
-    } else {
-      setUser(undefined);
-    }
-  }, [account]);
 
   // loads votes
   useEffect(() => {
-    let ballot1Options = [];
-    getVotes("option1", ballot1withProvider)
-      .then(votes => {
-        ballot1Options.push({
-          name: "option1",
-          votes: votes.toNumber(),
-          id: 1,
-          description: "description of optionName1",
-        });
-      })
-      .catch(error => {
-        console.log(error);
-      });
-    getVotes("option2", ballot1withProvider)
-      .then(votes => {
-        ballot1Options.push({
-          name: "option2",
-          votes: votes.toNumber(),
-          id: 2,
-          description: "description of optionName2",
-        });
-      })
-      .catch(error => {
-        console.log(error);
-      });
-    getVotes("option3", ballot1withProvider)
-      .then(votes => {
-        ballot1Options.push({
-          name: "option3",
-          votes: votes.toNumber(),
-          id: 3,
-          description: "description of optionName3",
-        });
-      })
-      .catch(error => {
-        console.log(error);
-      });
-    setOptions(ballot1Options);
+    console.log("hello ");
+    const fetchedProposals = [];
+    const fetchedOptions = [];
+    proposals[0].options.forEach(async option => {
+      await getVotes(option.name, ballot1withProvider)
+        .then(votes => {
+          fetchedOptions.push({ ...option, votes: votes });
+        })
+        .catch(error => console.log(error));
+    });
+    fetchedProposals.push({
+      title: "Topic for the next hackaton",
+      id: 1,
+      timeEnd: 13213213,
+      options: fetchedOptions,
+    });
+    setOptions(fetchedProposals);
+    setLoadingOptions(false);
+    return () => {
+      console.log("bye");
+    };
   }, []);
 
   return (
@@ -134,20 +113,24 @@ const Index = () => {
                   </span>
                 )}
               </div>
-              {proposals.map((proposal, index) => (
-                <article
-                  key={index}
-                  className={`border-t-[1px] border-[rgba(255,255,255,0.25)] pt-6 2xl:pt-7 mb-8`}
-                >
-                  <h3 className="text-xl font-medium mb-3">
-                    {proposal.id}# - {proposal.title}
-                  </h3>
-                  <div className="h-full w-full flex items-center ">
-                    <OptionsGroup user={user} options={proposal.options} />
-                    <Chart options={proposal.options} />
-                  </div>
-                </article>
-              ))}
+              {options && !isAccountLoading && (
+                <>
+                  {options.map((proposal, index) => (
+                    <article
+                      key={index}
+                      className={`border-t-[1px] border-[rgba(255,255,255,0.25)] pt-6 2xl:pt-7 mb-8`}
+                    >
+                      <h3 className="text-xl font-medium mb-3">
+                        {proposal.id}# - {proposal.title}
+                      </h3>
+                      <div className="h-full w-full flex items-center ">
+                        <OptionsGroup user={accountData?.address} options={proposal.options} />
+                        <Chart options={proposal.options} />
+                      </div>
+                    </article>
+                  ))}
+                </>
+              )}
             </section>
           </main>
           <footer className="mx-20 border-t-[1px] border-white/10 w-[100vw] h-[200px] box-border flex items-center justify-center">
