@@ -1,3 +1,8 @@
+
+// list of ballots created
+// 1: 0x3ff3EfbF39d056c4dE0277a2c5FFF924a4082807
+
+
 const nftContractAddress = "0x652a6302420d94f707b7ad9ae6efc9e849805605";
 
 async function createBytes(name) {

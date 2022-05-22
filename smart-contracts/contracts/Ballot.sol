@@ -179,13 +179,13 @@ contract Ballot {
     /**
      * @dev returns the voteCount for the specified name
      */
-    function voteCount(bytes32 nameToCheck) public view returns (uint256) {
-       for (uint i = 0; i < proposals.length; i++) {
-            if (proposals[i].name == nameToCheck) {
-                return proposals[i].voteCount;
+        function voteCount(bytes32 nameToCheck) public view returns (uint256) {
+        for (uint i = 0; i < proposals.length; i++) {
+                if (proposals[i].name == nameToCheck) {
+                    return proposals[i].voteCount;
+                }
             }
+            //TODO add better error handeling
+            return 0;
         }
-        //TODO add better error handeling
-        return 0;
     }
-}
