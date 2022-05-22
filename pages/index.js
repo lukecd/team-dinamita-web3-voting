@@ -11,6 +11,8 @@ import Informative from "../components/Informative.jsx";
 import { useAccount, useContract, useProvider, useSigner } from "wagmi";
 import abi from "../smart-contracts/abi/BallotAbi.json";
 import { createBytes } from "../utils/functions.js";
+import { Tooltip } from "@nextui-org/react";
+import WarningIcon from "../components/WarningIcon.jsx";
 
 const nacho = (
   <span className="text-teal-300">
@@ -29,7 +31,10 @@ const luke = (
   </span>
 );
 
+// at this moment only the ballot1 is created. it has "option1", "option2", "option3"
 const ballot1Address = "0x3ff3EfbF39d056c4dE0277a2c5FFF924a4082807";
+const ballot2Address = "0x8384AA012478A1f75DAF69812592BA9712cb0663";
+const ballot3Address = "0xbC49650e92FaC4B60409fa79cF72486df066876F";
 const ballotAbi = abi;
 
 const Index = () => {
@@ -41,6 +46,12 @@ const Index = () => {
   const { data: accountData, isError, isLoading: isAccountLoading } = useAccount();
   const [user, setUser] = useState(undefined);
 
+  const [getVotePowerLoading, setGetVotePowerLoading] = useState(false);
+  const [getVotePowerError, setGetVotePowerError] = useState(null);
+  const [hasVotePower, setHasVotePower] = useState(null);
+
+  const [hasVotedReloadUi, setHasVotedReloadUi] = useState(false);
+
   useEffect(() => {
     if (accountData && !isAccountLoading) {
       setUser(accountData.address);
@@ -49,12 +60,40 @@ const Index = () => {
 
   // contracts data
   const provider = useProvider();
-
-  const ballot1withProvider = useContract({
+  const ballotWithProvider1 = useContract({
     addressOrName: ballot1Address,
     contractInterface: ballotAbi,
     signerOrProvider: provider,
   });
+  const ballotWithProvider2 = useContract({
+    addressOrName: ballot2Address,
+    contractInterface: ballotAbi,
+    signerOrProvider: provider,
+  });
+  const ballotWithProvider3 = useContract({
+    addressOrName: ballot3Address,
+    contractInterface: ballotAbi,
+    signerOrProvider: provider,
+  });
+  const ballotsWithProviders = [ballotWithProvider1, ballotWithProvider2, ballotWithProvider3];
+
+  const { data: signer, isError: isSignerError, isLoading: isSignerLoading } = useSigner();
+  const ballotWithSigner1 = useContract({
+    addressOrName: ballot1Address,
+    contractInterface: ballotAbi,
+    signerOrProvider: signer,
+  });
+  const ballotWithSigner2 = useContract({
+    addressOrName: ballot2Address,
+    contractInterface: ballotAbi,
+    signerOrProvider: signer,
+  });
+  const ballotWithSigner3 = useContract({
+    addressOrName: ballot3Address,
+    contractInterface: ballotAbi,
+    signerOrProvider: signer,
+  });
+  const ballotsWithSigners = [ballotWithSigner1, ballotWithSigner2, ballotWithSigner3];
 
   // FUNCTIONS
   const getVotes = async (name, contract) => {
@@ -63,36 +102,65 @@ const Index = () => {
     return votes;
   };
 
+  const getVotePower = async contract => {
+    const data = await contract.registerToVote({ gasLimit: 2600000 });
+    console.log(data);
+    let receipt = await data.wait();
+    console.log(receipt);
+    return receipt;
+  };
+
+  // registerToVote validations -> isWeb3Citizen, !voted
+  const handleClaimVotePower = contract => {
+    setGetVotePowerLoading(true);
+    getVotePower(contract)
+      .then(result => {
+        console.log("getVotePower - successfull!", result);
+        setGetVotePowerError(null);
+        setHasVotePower(true);
+      })
+      .catch(error => {
+        console.log("getVotePower - error", error);
+        setGetVotePowerError(error.reason);
+        setHasVotePower(false);
+      })
+      .finally(() => {
+        setGetVotePowerLoading(false);
+      });
+  };
+
   // loads votes
   useEffect(() => {
     console.log("hello ");
     const fetchedProposals = [];
-    const fetchedOptions = [];
-    proposals[0].options.forEach(async option => {
-      await getVotes(option.name, ballot1withProvider)
-        .then(votes => {
-          fetchedOptions.push({ ...option, votes: votes });
-        })
-        .catch(error => console.log(error));
-    });
-    fetchedProposals.push({
-      title: "Topic for the next hackaton",
-      id: 1,
-      timeEnd: 13213213,
-      options: fetchedOptions,
+    proposals.forEach((proposal, index) => {
+      const fetchedOptions = [];
+      proposal.options.forEach(async option => {
+        await getVotes(option.name, ballotsWithProviders[index])
+          .then(votes => {
+            fetchedOptions.push({ ...option, votes: votes });
+          })
+          .catch(error => console.log(error));
+      });
+      fetchedProposals.push({
+        title: proposal.title,
+        id: proposal.id,
+        timeEnd: proposal.timeEnd,
+        options: fetchedOptions,
+      });
     });
     setOptions(fetchedProposals);
     setLoadingOptions(false);
     return () => {
       console.log("bye");
     };
-  }, []);
+  }, [hasVotedReloadUi]);
 
   return (
     <>
       <div className="h-full bg-gradient w-full flex items-center justify-center font-Inter text-white">
         {/* page container -> aprox 80% width.  */}
-        <div className="h-100 w-10/12 flex flex-col items-center">
+        <div className="h-full w-10/12 flex flex-col items-center">
           {/* navbar */}
           <nav className="h-20 w-full flex items-center justify-between relative border-b-[1px] border-[rgba(255,255,255,0.25)]">
             {/* justify-center */}
@@ -102,8 +170,23 @@ const Index = () => {
               <ConnectButton />
             </div>
           </nav>
-
-          <main className="h-full w-full flex flex-col items-center">
+          <main className="h-full w-full flex flex-col">
+            <section className="w-full py-6 border-b-[1px] border-white/25 flex flex-col">
+              <p className="text-lg 2xl:text-xl font-medium mb-3">
+                Instructions: To be able to vote on a proposal, you have to claim our NFT to be
+                validated as a active member of the community. Also, you have to claim vote power
+                for each proposal.
+              </p>
+              <span className="flex items-center">
+                <span className="text-cyan-400 relative top-[1px]">
+                  <WarningIcon />
+                </span>
+                <p className="text-lg 2xl:text-xl text-cyan-400">
+                  We are facing a development UI error, if you dont see the available options to
+                  vote, connect and disconnect you wallet in the button from above. Thanks.
+                </p>
+              </span>
+            </section>
             <section className="w-full">
               <div className="flex justify-between items-center my-4">
                 <h2 className="text-2xl font-medium">Projects being voted:</h2>
@@ -120,11 +203,52 @@ const Index = () => {
                       key={index}
                       className={`border-t-[1px] border-[rgba(255,255,255,0.25)] pt-6 2xl:pt-7 mb-8`}
                     >
-                      <h3 className="text-xl font-medium mb-3">
-                        {proposal.id}# - {proposal.title}
-                      </h3>
+                      <div className="flex items-center justify-between w-full mb-3">
+                        <h3 className="text-xl font-medium">
+                          {proposal.id}# - {proposal.title}
+                        </h3>
+                        <Tooltip
+                          shadow={true}
+                          placement="bottom"
+                          content={
+                            getVotePowerLoading
+                              ? "Fetching on the blockchain for vote power..."
+                              : getVotePowerError
+                              ? "Error you dont hold the NFT or you have already voted in this proposal."
+                              : hasVotePower
+                              ? "You have the vote power!"
+                              : "Check if you have the nft and have not voted yet to get 1 vote power"
+                          }
+                          css={{
+                            borderRadius: "$sm",
+                            padding: "$4 $8",
+                            fontWeight: "$medium",
+                          }}
+                        >
+                          <button
+                            className="text-center w-44 border-[2px] rounded-lg px-4 py-3 font-semibold bg-[rgba(153,102,255,0.35)] border-[rgba(153,102,255,1)] hover:bg-[rgba(126,69,241,0.35)] hover:border-[rgba(127,63,255,1)] mr-4 relative cursor-pointer"
+                            onClick={() => handleClaimVotePower(ballotsWithSigners[index])}
+                          >
+                            {getVotePowerLoading
+                              ? "Loading.."
+                              : getVotePowerError
+                              ? "Error"
+                              : hasVotePower
+                              ? "Empowered!"
+                              : "Get vote power"}
+                          </button>
+                        </Tooltip>
+                      </div>
+
                       <div className="h-full w-full flex items-center ">
-                        <OptionsGroup user={accountData?.address} options={proposal.options} />
+                        <OptionsGroup
+                          user={accountData?.address}
+                          options={proposal.options}
+                          hasVotePower={hasVotePower}
+                          getVotePowerError={getVotePowerError}
+                          setHasVotedReloadUi={setHasVotedReloadUi}
+                          ballotWithSigner={ballotsWithSigners[index]}
+                        />
                         <Chart options={proposal.options} />
                       </div>
                     </article>

@@ -4,31 +4,40 @@ import { useState } from "react";
 import { RadioGroup } from "@headlessui/react";
 import { Tooltip } from "@nextui-org/react";
 import abi from "../smart-contracts/abi/BallotAbi.json";
-import { useContract, useSigner } from "wagmi";
+import { serialize, useContract, useSigner } from "wagmi";
 
-const ballot1Address = "0x3ff3EfbF39d056c4dE0277a2c5FFF924a4082807";
-const ballotAbi = abi;
+// at this moment only the ballot1 is created. it has "option1", "option2", "option3"
+// const ballot1Address = "0x3ff3EfbF39d056c4dE0277a2c5FFF924a4082807";
+// const ballot2Address = "0x3ff3EfbF39d056c4dE0277a2c5FFF924a4082807";
+// const ballot3Address = "0x3ff3EfbF39d056c4dE0277a2c5FFF924a4082807";
+// const ballotAbi = abi;
 
-export default function OptionsGroup({ user, openModal, options }) {
-  const [getVotePowerLoading, setGetVotePowerLoading] = useState(false);
-  const [getVotePowerError, setGetVotePowerError] = useState(null);
-  const [hasVotePower, setHasVotePower] = useState(null);
+export default function OptionsGroup({ user, options, setHasVotedReloadUi, ballotWithSigner }) {
+  const [voteError, setVoteError] = useState(null);
+  const [voting, setVoting] = useState(false);
+  const [voted, setVoted] = useState(false);
 
-  const { data: signer, isError: isSignerError, isLoading: isSignerLoading } = useSigner();
-
-  const ballot1withSigner = useContract({
-    addressOrName: ballot1Address,
-    contractInterface: ballotAbi,
-    signerOrProvider: signer,
-  });
-
-  const getVotePower = async contract => {
-    const data = await contract.registerToVote();
-    return data;
-  };
+  // const { data: signer, isError: isSignerError, isLoading: isSignerLoading } = useSigner();
+  // const ballotWithSigner1 = useContract({
+  //   addressOrName: ballot1Address,
+  //   contractInterface: ballotAbi,
+  //   signerOrProvider: signer,
+  // });
+  // const ballotWithSigner2 = useContract({
+  //   addressOrName: ballot2Address,
+  //   contractInterface: ballotAbi,
+  //   signerOrProvider: signer,
+  // });
+  // const ballotWithSigner3 = useContract({
+  //   addressOrName: ballot3Address,
+  //   contractInterface: ballotAbi,
+  //   signerOrProvider: signer,
+  // });
+  // const ballotsWithSigners = [ballotWithSigner1, ballotWithSigner2, ballotWithSigner3];
 
   const vote = async (optionName, contract) => {
-    const data = await contract.vote(optionName, {
+    console.log(optionName - 1);
+    const data = await contract.vote(optionName - 1, {
       gasLimit: 2599999,
     });
     console.log(data);
@@ -36,26 +45,6 @@ export default function OptionsGroup({ user, openModal, options }) {
     console.log(receipt);
     return receipt;
   };
-  // registerToVote validations -> isWeb3Citizen, !voted
-  // useEffect(() => {
-  //   if (user) {
-  //     setGetVotePowerLoading(true);
-  //     getVotePower(ballot1withSigner)
-  //       .then(result => {
-  //         console.log("getVotePower ballot1 - successfull!", result);
-  //         setGetVotePowerError(null);
-  //         setHasVotePower(true);
-  //       })
-  //       .catch(error => {
-  //         console.log("getVotePower ballot1 - error", error.reason);
-  //         setGetVotePowerError(error.reason);
-  //         setHasVotePower(false);
-  //       })
-  //       .finally(() => {
-  //         setGetVotePowerLoading(false);
-  //       });
-  //   }
-  // }, [user]);
 
   const [selected, setSelected] = useState(null);
   const [isTimeLeft, setIsTimeLeft] = useState(true);
@@ -74,17 +63,25 @@ export default function OptionsGroup({ user, openModal, options }) {
     }
   };
 
+  // FALTA HANDELEAR EL VOTE CON EL CONTRATO CORRECTO.
   const handleVote = async () => {
     // to be able to vote the user has to be connected, be verified as a holder, and have a selected option.
     if (user && selected) {
       const selectedOption = await options.find(option => option.id === selected);
-      console.log(selectedOption.name);
-      vote(selectedOption.id, ballot1withSigner)
+      setVoting(true);
+      vote(selectedOption.id, ballotWithSigner)
         .then(result => {
           console.log(result);
+          setVoted(true);
+          setHasVotedReloadUi(hasVotedReloadUi => !hasVotedReloadUi);
+          setVoteError(null);
         })
         .catch(error => {
           console.log(error);
+          setVoteError(error.reason);
+        })
+        .finally(() => {
+          setVoting(false);
         });
     }
   };
@@ -116,19 +113,18 @@ export default function OptionsGroup({ user, openModal, options }) {
                         <div className="text-sm">
                           <RadioGroup.Label
                             as="p"
-                            className={`font-medium text-base mb-1  ${
-                              checked ? "text-white" : "text-gray-900"
+                            className={`font-medium text-base mb-2 flex ${
+                              checked ? "text-white" : "text-gray-700"
                             }`}
                           >
-                            {option.name}
+                            <p className="mr-[16rem]">{option.name}</p>
+                            <p>votes: {option.votes}</p>
                           </RadioGroup.Label>
                           <RadioGroup.Description
                             as="span"
-                            className={`inline ${checked ? "text-sky-100" : "text-gray-500"}`}
+                            className={`flex ${checked ? "text-sky-100" : "text-gray-900"}`}
                           >
-                            <span className="mr-8">
-                              {option.description} - {option.votes}
-                            </span>
+                            <p className="">{option.description}</p>
                           </RadioGroup.Description>
                         </div>
                       </div>
@@ -146,35 +142,37 @@ export default function OptionsGroup({ user, openModal, options }) {
         </RadioGroup>
         <div className="flex justify-between mt-5">
           {isTimeLeft ? (
-            // votation still going on
-            <Tooltip
-              shadow={true}
-              placement="bottom"
-              // getVotePowerError could be -> already voted or not holding the nft.
-              content={
-                user
-                  ? hasVotePower
-                    ? selected
-                      ? "Click to emit the vote!"
-                      : "Select an option to emit a vote"
-                    : getVotePowerError
-                  : "connect wallet to emit a vote."
-              }
-              css={{
-                borderRadius: "$sm",
-                padding: "$4 $8",
-                fontWeight: "$medium",
-              }}
-            >
-              <button
-                disabled={getVotePowerError}
-                onClick={handleVote}
-                className="font-semibold w-48 py-2 rounded-lg cursor-pointer
-                    bg-[rgba(255,174,0,0.7)] border-[2px] border-[rgb(255,174,0)]/[1] drop-shadow-[0_0_5px_rgba(255,174,0,1)]"
+            <>
+              {/* votation still going on */}
+              <Tooltip
+                shadow={true}
+                placement="bottom"
+                content={
+                  user
+                    ? !voting
+                      ? !voteError
+                        ? selected
+                          ? "Click to emit the vote!"
+                          : "Select an option to emit a vote"
+                        : "Error. check if you hold the nft or if you have already voted."
+                      : "Voting on the blockchain..."
+                    : "Connect wallet to emit a vote."
+                }
+                css={{
+                  borderRadius: "$sm",
+                  padding: "$4 $8",
+                  fontWeight: "$medium",
+                }}
               >
-                Vote
-              </button>
-            </Tooltip>
+                <button
+                  onClick={() => handleVote()} // FALTA HANDELEAR EL PASARLE EL CONTRATO CORRECTO.
+                  className="font-semibold w-48 py-2 rounded-lg cursor-pointer
+                    bg-[rgba(255,174,0,0.7)] border-[2px] border-[rgb(255,174,0)]/[1] drop-shadow-[0_0_5px_rgba(255,174,0,1)]"
+                >
+                  {voted ? "Voted!" : voting ? "Voting..." : voteError ? "Error" : "Vote"}
+                </button>
+              </Tooltip>
+            </>
           ) : (
             // votation has ended => show winner
             <button

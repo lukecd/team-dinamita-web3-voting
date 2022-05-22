@@ -8,10 +8,10 @@ import abi from "../smart-contracts/artifacts/contracts/Web3Citizen.sol/Web3Citi
 const nftAddress = "0x652a6302420D94F707b7Ad9Ae6eFc9E849805605"; // nft contract
 const nftAbi = abi.abi;
 
-const MintNFT = ({ user}) => {
+const MintNFT = ({ user }) => {
   const [mintingNft, setMintingNft] = useState(false);
-  const [mintingNftError, setMintingNftError] = useState(false);
-  const [minted, setMinted] = useState(undefined);
+  const [mintingNftError, setMintingNftError] = useState(null);
+  const [minted, setMinted] = useState(false);
 
   const { data: signer, isError: isSignerError, isLoading: isSignerLoading } = useSigner();
   const nftWithSigner = useContract({
@@ -22,7 +22,7 @@ const MintNFT = ({ user}) => {
 
   const mintNft = async () => {
     const data = await nftWithSigner.mint({
-      gasLimit: 2599999,
+      gasLimit: 5000000,
     });
     console.log(data);
     let receipt = await data.wait();
@@ -42,15 +42,13 @@ const MintNFT = ({ user}) => {
         .catch(error => {
           console.log("handleMintNft - error ", error.reason);
           console.log(error);
-          setMintingNftError(error.reason);
-          setMinted(true);
+          setMintingNftError(error.message);
         })
         .finally(() => {
           setMintingNft(false);
         });
     }
   };
-  //y ya casi tengo el minteo :D
 
   // the function to verify if the adress has the nft is private
   // because of that, we will check in the try to mint and in the votation time.
@@ -62,23 +60,44 @@ const MintNFT = ({ user}) => {
           shadow={true}
           placement="bottom"
           content={
-            mintingNft
-              ? "minting ... "
-              : mintingNftError
-              ? mintingNftError
-              : "Mint this test-net NFT to be able to vote. You can only mint one."
+            mintingNft ? (
+              "minting ... "
+            ) : minted ? (
+              <a
+                className="flex items-center justify-center flex-col"
+                href={`https://testnets.opensea.io/${user}`}
+                target="_blank"
+              >
+                <p className="">Minted the NFT successfuly.</p>
+                <p className="text-cyan-400">Click here to see your new NFT in open sea!</p>
+                <p> ( It will take 1min for opensea to load it. )</p>
+              </a>
+            ) : mintingNftError !== null ? (
+              mintingNftError
+            ) : (
+              "Mint this test-net NFT to be get Vote Power and emit a vote!. You can only mint one."
+            )
           }
           css={{
             borderRadius: "$sm",
             padding: "$4 $8",
             fontWeight: "$medium",
+            textAlign: "center",
           }}
         >
           <button
             onClick={handleMintNft}
             className={`text-center w-44 border-[2px] rounded-lg px-4 py-3 font-semibold bg-[rgba(153,102,255,0.35)] border-[rgba(153,102,255,1)] hover:bg-[rgba(126,69,241,0.35)] hover:border-[rgba(127,63,255,1)] mr-4 relative cursor-pointer`}
           >
-            {mintingNft ? <Loading color="secondary" size="sm" /> : "Mint the NFT!"}
+            {mintingNft ? (
+              <Loading color="secondary" size="sm" />
+            ) : minted ? (
+              "Minted"
+            ) : mintingNftError === null ? (
+              "Mint the NFT!"
+            ) : (
+              "Error"
+            )}
           </button>
         </Tooltip>
       )}

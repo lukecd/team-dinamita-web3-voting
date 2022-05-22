@@ -1,6 +1,8 @@
 
 // list of ballots created
-// 1: 0x3ff3EfbF39d056c4dE0277a2c5FFF924a4082807
+const ballot1Address = "0x3ff3EfbF39d056c4dE0277a2c5FFF924a4082807";
+const ballot2Address = "0x8384AA012478A1f75DAF69812592BA9712cb0663";
+const ballot3Address = "0xbC49650e92FaC4B60409fa79cF72486df066876F";
 
 
 const nftContractAddress = "0x652a6302420d94f707b7ad9ae6efc9e849805605";
