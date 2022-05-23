@@ -12,7 +12,8 @@ import "./Web3Citizen.sol";
  // deployed to 0xb802A73EA72393A934619e92DFDB1ccf214109E3
 contract Ballot {
     address private _web3CitizenIdContract;
-
+    //lists all registerd voters
+    mapping(address => uint256) private _registeredVoters;
 
     struct Voter {
         uint weight; // weight is accumulated by delegation as each user can only have 1 vote
@@ -55,36 +56,24 @@ contract Ballot {
     
     /**
      * @dev This should be in the constructor, but it's giving me out of gas errors
+     *
+     * Comment out. Makes less secure, but helps launch hackathon
      */
-    function addToWeb3Citizen() public {
-       // now we tell the ID contract that a new Ballot has been created
-        Web3Citizen studentIDToken = Web3Citizen(_web3CitizenIdContract);
-        studentIDToken.addBallotToCollection();
-    }
+    //function addToWeb3Citizen() public {
+    //   // now we tell the ID contract that a new Ballot has been created
+    //    Web3Citizen studentIDToken = Web3Citizen(_web3CitizenIdContract);
+    //    studentIDToken.addBallotToCollection();
+    //}
 
     /**
      * @dev Checks to see if specified address owns an earlyStudentNFT
      */
-    function isWeb3Citizen(address addressToCheck) private view returns (bool) {
+    function isWeb3Citizen(address addressToCheck) public view returns (bool) {
         // connect to the citizen id contract
         Web3Citizen studentIDToken = Web3Citizen(_web3CitizenIdContract);
-        
-        //uint256 balance = studentIDToken.balanceOf(addressToCheck);
-        //console.log("isWeb3Citizen:address: ",addressToCheck);
-        //console.log("isWeb3Citizen:balance: ", balance);
-
+ 
         // check to see if the specified account has an early student id
         return studentIDToken.balanceOf(addressToCheck) > 0;
-    }
-
-    /** 
-     * @dev Register msg.sender to vote
-     */
-    function registerToVote() public {
-        require(isWeb3Citizen(msg.sender), "Only Web3Citizens can register to vote");
-        require(!voters[msg.sender].voted, "You already voted");
-        require(voters[msg.sender].weight == 0);
-        voters[msg.sender].weight = 1;
     }
 
     /**
@@ -92,11 +81,20 @@ contract Ballot {
      * @param to address to which vote is delegated
      */
     function delegate(address to) public {
+        // check to see voter and delegate are registered to vote
+        if(_registeredVoters[msg.sender] == 0) {
+            _registeredVoters[msg.sender] = 1;
+            voters[msg.sender].weight = 1;
+        }
+        if(_registeredVoters[to] == 0) {
+            _registeredVoters[to] = 1;
+            voters[to].weight = 1;
+        }
+
         Voter storage sender = voters[msg.sender];
         require(!sender.voted, "You already voted.");
         require(to != msg.sender, "Self-delegation is disallowed.");
-        require(isWeb3Citizen(to), "You must delegate to someone with a citizen ID to vote");
-
+       
         // this covers the corner-case when someone delegates they
         // vote to someone who has already delegated their vote to someone else
         // If A has delegated to C, and B tries to delegate to A, B's delegation will move to C
@@ -131,7 +129,11 @@ contract Ballot {
      * @param optionID index of proposal in the proposals array
      */
     function vote(uint optionID) public {
-        require(isWeb3Citizen(msg.sender), "You need a citizen ID to vote");
+        // check to see if we've registered them to vote
+        if(_registeredVoters[msg.sender] == 0) {
+            _registeredVoters[msg.sender] = 1;
+            voters[msg.sender].weight = 1;
+        }
 
         Voter storage sender = voters[msg.sender];
         require(!sender.voted, "You already voted");

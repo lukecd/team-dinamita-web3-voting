@@ -33,15 +33,17 @@ const main = async () => {
         console.log("Ballot deployed to ", ballot.address);
         // This should be called from the Ballot constructor when deploying, but I'm getting not enough gas errors
         // I guess we'll have to do this for now. I'll work on it some more tomorrow.
-        await ballot.addToWeb3Citizen();
+        // REmove for now.
+        //await ballot.addToWeb3Citizen();
 
         // register to vote 
         // NOTE THIS IS A NEW STEP!
-        await ballot.connect(person1).registerToVote();
-        await ballot.connect(person2).registerToVote();
-        await ballot.connect(person3).registerToVote();
-        await ballot.connect(person4).registerToVote();
-        await ballot.connect(person5).registerToVote();
+        // Done automatically now
+        //await ballot.connect(person1).registerToVote();
+        //await ballot.connect(person2).registerToVote();
+        //await ballot.connect(person3).registerToVote();
+        //await ballot.connect(person4).registerToVote();
+        //await ballot.connect(person5).registerToVote();
 
         // persons 1-3 vote on their own
         await ballot.connect(person1).vote(0);

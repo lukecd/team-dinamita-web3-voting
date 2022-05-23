@@ -24,6 +24,7 @@ contract Web3Citizen is ERC721URIStorage {
     //searching mappings uses way less gas than arrays, so we hack a bit
     mapping(address => uint256) public ballotAddresses;
 
+
     constructor() ERC721("Web3Citizen", "W3ID") {
 
     }
@@ -31,10 +32,12 @@ contract Web3Citizen is ERC721URIStorage {
     /**
      * @dev Adds the address of the newly created Ballot
      * Ideally we'd verify that msg.sender actually is a Ballot contract, but that's probably beyond the scope of this
+     *
+     * Comment out for now, not needed for hackathon purposes
      */
-    function addBallotToCollection() public {
-        ballotAddresses[msg.sender] = 1;
-    }
+    //function addBallotToCollection() public {
+    //    ballotAddresses[msg.sender] = 1;
+    //}
 
     /**
      * @dev Generates the citizen id, where the number of color blobs is equal to the number of times said NFT has voted
@@ -130,10 +133,11 @@ contract Web3Citizen is ERC721URIStorage {
      * 
      */
     function vote(address votingAddress) public {
-        require(ballotAddresses[msg.sender] == 1, "Only registered Ballot contracts can call Web3Citizen.vote()");
+        // comment out to remove a bit of security and make things easier
+        //require(ballotAddresses[msg.sender] == 1, "Only registered Ballot contracts can call Web3Citizen.vote()");
         uint256 tokenId = addressToTokenId[votingAddress];
         require(_exists(tokenId), "please use an existing id");
-        //TODO only allow Ballot to call
+        
         uint256 voteCount = tokenIdToVoteCount[tokenId];
         tokenIdToVoteCount[tokenId] = voteCount + 1;
          _setTokenURI(tokenId, getTokenURI(tokenId));       
