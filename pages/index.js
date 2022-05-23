@@ -5,8 +5,6 @@ import { ConnectButton } from "@rainbow-me/rainbowkit";
 import OptionsGroup from "/components/OptionsGroup.jsx";
 import Chart from "../components/Chart.jsx";
 import MintNFT from "../components/MintNFT";
-import MyDialog from "../components/MyDialog";
-import Informative from "../components/Informative.jsx";
 
 import { useAccount, useContract, useProvider, useSigner } from "wagmi";
 import abi from "../smart-contracts/abi/BallotAbi.json";
@@ -29,7 +27,6 @@ const luke = (
   </span>
 );
 
-// at this moment only the ballot1 is created. it has "option1", "option2", "option3"
 const ballot1Address = "0x7529C3E807d35B04241486e52796830eDB20EA8c";
 const ballot2Address = "0xd46f127d31f1BDb5Adb03A8cF363d89a8CBdd04c";
 const ballot3Address = "0x590c8AEE99943Eb65817D461ED1d3c23119aA2F0";
@@ -43,12 +40,6 @@ const Index = () => {
 
   const { data: accountData, isError, isLoading: isAccountLoading } = useAccount();
   const [user, setUser] = useState(undefined);
-
-  // const [getVotePowerLoading, setGetVotePowerLoading] = useState(false);
-  // const [getVotePowerError, setGetVotePowerError] = useState(null);
-  // const [hasVotePower, setHasVotePower] = useState(null);
-
-  const [hasVotedReloadUi, setHasVotedReloadUi] = useState(false);
 
   useEffect(() => {
     if (accountData && !isAccountLoading) {
@@ -93,15 +84,13 @@ const Index = () => {
   });
   const ballotsWithSigners = [ballotWithSigner1, ballotWithSigner2, ballotWithSigner3];
 
-  // FUNCTIONS
+  // loads votes
   const getVotes = async (name, contract) => {
     const data = await contract.voteCount(createBytes(name));
     const votes = await data.toNumber();
     return votes;
   };
 
-
-  // loads votes
   useEffect(() => {
     console.log("hello ");
     const fetchedProposals = [];

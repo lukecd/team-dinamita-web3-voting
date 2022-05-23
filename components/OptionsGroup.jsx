@@ -37,9 +37,7 @@ export default function OptionsGroup({ user, options, ballotWithSigner }) {
     }
   };
 
-  // FALTA HANDELEAR EL VOTE CON EL CONTRATO CORRECTO.
   const handleVote = async () => {
-    // to be able to vote the user has to be connected, be verified as a holder, and have a selected option.
     if (user && selected) {
       const selectedOption = await options.find(option => option.id === selected);
       setVoting(true);

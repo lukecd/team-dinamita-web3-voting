@@ -25,7 +25,7 @@ export const proposalsData = [
     ],
   },
   {
-    title: "What you would like to learn next in the alchemy roadmap?",
+    title: "What would you like to learn next in the alchemy roadmap?",
     id: 2,
     timeEnd: 13213213,
     options: [
