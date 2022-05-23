@@ -13,3 +13,21 @@ body, html, #__next{
 .bg-gradient{
     background-image: radial-gradient( circle 610px at 5.2% 51.6%,  rgba(5,8,114,1) 0%, rgba(7,3,53,1) 97.5% );
 }
+
+.unicorn {
+        position: fixed;
+        top: 0px;
+        left: 0px;
+        bottom: 0px;
+        right: 0px;
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        font-size: 150px;
+}
+    
+.confetti {
+        transition: all 0.5;
+        opacity: 0;
+}

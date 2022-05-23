@@ -9,6 +9,7 @@ import {
   darkTheme,
 } from "@rainbow-me/rainbowkit";
 import { chain, createClient, WagmiProvider } from "wagmi";
+import { NextUIProvider } from "@nextui-org/react";
 
 const { chains, provider } = configureChains(
   [chain.mainnet, chain.polygon, chain.polygonMumbai],
@@ -26,13 +27,24 @@ const wagmiClient = createClient({
   provider,
 });
 
+import { createTheme } from "@nextui-org/react"
+
+const darkThemeNextUi = createTheme({
+  type: 'dark',
+  // theme: {
+  //   colors: {...}, // override dark theme colors
+  // }
+});
+
 function MyApp({ Component, pageProps }) {
   return (
-    <WagmiProvider client={wagmiClient}>
-      <RainbowKitProvider coolMode chains={chains} theme={darkTheme()}>
-        <Component {...pageProps} />
-      </RainbowKitProvider>
-    </WagmiProvider>
+    <NextUIProvider theme={ darkThemeNextUi}>
+      <WagmiProvider client={wagmiClient}>
+        <RainbowKitProvider coolMode chains={chains} theme={darkTheme()}>
+          <Component {...pageProps} />
+        </RainbowKitProvider>
+      </WagmiProvider>
+    </NextUIProvider>
   );
 }
 
