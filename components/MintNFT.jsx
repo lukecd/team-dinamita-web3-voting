@@ -1,11 +1,10 @@
-import { Dialog } from "@headlessui/react";
 import { Tooltip, Loading } from "@nextui-org/react";
-import React, { useState, useEffect } from "react";
-import { useContract, useFeeData, useProvider, useSigner } from "wagmi";
+import React, { useState } from "react";
+import { useContract, useSigner } from "wagmi";
 
 import abi from "../smart-contracts/artifacts/contracts/Web3Citizen.sol/Web3Citizen.json";
 
-const nftAddress = "0x652a6302420D94F707b7Ad9Ae6eFc9E849805605"; // nft contract
+const nftAddress = "0x4Eed0b565D57DB5D7A103Dc751104e03897cfcA0"; // nft contract
 const nftAbi = abi.abi;
 
 const MintNFT = ({ user }) => {
@@ -49,9 +48,6 @@ const MintNFT = ({ user }) => {
         });
     }
   };
-
-  // the function to verify if the adress has the nft is private
-  // because of that, we will check in the try to mint and in the votation time.
   return (
     <>
       {/* only connected users can see the Mint button. */}
@@ -73,7 +69,7 @@ const MintNFT = ({ user }) => {
                 <p> ( It will take 1min for opensea to load it. )</p>
               </a>
             ) : mintingNftError !== null ? (
-              mintingNftError
+              "Transaction failed. Check if you already have the NFT. You can only mint one. If you dont have one yet, it must be that you dont have enough gas to mint. Around 0.07 matic is needed."
             ) : (
               "Mint this test-net NFT to be get Vote Power and emit a vote!. You can only mint one."
             )

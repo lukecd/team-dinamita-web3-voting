@@ -3,42 +3,16 @@ import Countdown from "react-countdown";
 import { useState } from "react";
 import { RadioGroup } from "@headlessui/react";
 import { Tooltip } from "@nextui-org/react";
-import abi from "../smart-contracts/abi/BallotAbi.json";
-import { serialize, useContract, useSigner } from "wagmi";
 
-// at this moment only the ballot1 is created. it has "option1", "option2", "option3"
-// const ballot1Address = "0x3ff3EfbF39d056c4dE0277a2c5FFF924a4082807";
-// const ballot2Address = "0x3ff3EfbF39d056c4dE0277a2c5FFF924a4082807";
-// const ballot3Address = "0x3ff3EfbF39d056c4dE0277a2c5FFF924a4082807";
-// const ballotAbi = abi;
-
-export default function OptionsGroup({ user, options, setHasVotedReloadUi, ballotWithSigner }) {
+export default function OptionsGroup({ user, options, ballotWithSigner }) {
   const [voteError, setVoteError] = useState(null);
   const [voting, setVoting] = useState(false);
   const [voted, setVoted] = useState(false);
 
-  // const { data: signer, isError: isSignerError, isLoading: isSignerLoading } = useSigner();
-  // const ballotWithSigner1 = useContract({
-  //   addressOrName: ballot1Address,
-  //   contractInterface: ballotAbi,
-  //   signerOrProvider: signer,
-  // });
-  // const ballotWithSigner2 = useContract({
-  //   addressOrName: ballot2Address,
-  //   contractInterface: ballotAbi,
-  //   signerOrProvider: signer,
-  // });
-  // const ballotWithSigner3 = useContract({
-  //   addressOrName: ballot3Address,
-  //   contractInterface: ballotAbi,
-  //   signerOrProvider: signer,
-  // });
-  // const ballotsWithSigners = [ballotWithSigner1, ballotWithSigner2, ballotWithSigner3];
-
   const vote = async (optionName, contract) => {
     console.log(optionName - 1);
     const data = await contract.vote(optionName - 1, {
-      gasLimit: 2599999,
+      gasLimit: 2999999,
     });
     console.log(data);
     let receipt = await data.wait();
@@ -51,7 +25,7 @@ export default function OptionsGroup({ user, options, setHasVotedReloadUi, ballo
   const [time, setTime] = useState(0);
 
   useEffect(() => {
-    const countDownDate = new Date("May 22, 2022 23:59:59").getTime();
+    const countDownDate = new Date("May 23, 2022 22:30:00").getTime();
     const now = new Date().getTime();
 
     setTime(Date.now() + (countDownDate - now));
@@ -73,7 +47,7 @@ export default function OptionsGroup({ user, options, setHasVotedReloadUi, ballo
         .then(result => {
           console.log(result);
           setVoted(true);
-          setHasVotedReloadUi(hasVotedReloadUi => !hasVotedReloadUi);
+          // setHasVotedReloadUi(hasVotedReloadUi => !hasVotedReloadUi);
           setVoteError(null);
         })
         .catch(error => {
@@ -148,15 +122,33 @@ export default function OptionsGroup({ user, options, setHasVotedReloadUi, ballo
                 shadow={true}
                 placement="bottom"
                 content={
-                  user
-                    ? !voting
-                      ? !voteError
-                        ? selected
-                          ? "Click to emit the vote!"
-                          : "Select an option to emit a vote"
-                        : "Error. check if you hold the nft or if you have already voted."
-                      : "Voting on the blockchain..."
-                    : "Connect wallet to emit a vote."
+                  user ? (
+                    !voted ? (
+                      !voting ? (
+                        !voteError ? (
+                          selected ? (
+                            "Click to emit the vote!"
+                          ) : (
+                            "Select an option to emit a vote"
+                          )
+                        ) : (
+                          "Error. check if you hold the nft or if you have already voted."
+                        )
+                      ) : (
+                        "Voting on the blockchain..."
+                      )
+                    ) : (
+                      <span className="flex items-center justify-center flex-col">
+                        <p>Voted succesfully!, if the UI doesn't reload, do it manually. Thanks.</p>
+                        <p>
+                          You NFT evolved!, go to open sea and refresh the metadata to see the
+                          evolution!
+                        </p>
+                      </span>
+                    )
+                  ) : (
+                    "Connect wallet to emit a vote."
+                  )
                 }
                 css={{
                   borderRadius: "$sm",

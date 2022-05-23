@@ -11,7 +11,6 @@ import Informative from "../components/Informative.jsx";
 import { useAccount, useContract, useProvider, useSigner } from "wagmi";
 import abi from "../smart-contracts/abi/BallotAbi.json";
 import { createBytes } from "../utils/functions.js";
-import { Tooltip } from "@nextui-org/react";
 import WarningIcon from "../components/WarningIcon.jsx";
 
 const nacho = (
@@ -24,7 +23,6 @@ const gonza = (
     <Link href="https://twitter.com/gonzaotc">@gonzaotc</Link>
   </span>
 );
-// HAY ESPERANZAS.
 const luke = (
   <span className="text-teal-300">
     <Link href="#">@lukebkk</Link>
@@ -32,9 +30,9 @@ const luke = (
 );
 
 // at this moment only the ballot1 is created. it has "option1", "option2", "option3"
-const ballot1Address = "0x3ff3EfbF39d056c4dE0277a2c5FFF924a4082807";
-const ballot2Address = "0x8384AA012478A1f75DAF69812592BA9712cb0663";
-const ballot3Address = "0xbC49650e92FaC4B60409fa79cF72486df066876F";
+const ballot1Address = "0x7529C3E807d35B04241486e52796830eDB20EA8c";
+const ballot2Address = "0xd46f127d31f1BDb5Adb03A8cF363d89a8CBdd04c";
+const ballot3Address = "0x590c8AEE99943Eb65817D461ED1d3c23119aA2F0";
 const ballotAbi = abi;
 
 const Index = () => {
@@ -46,9 +44,9 @@ const Index = () => {
   const { data: accountData, isError, isLoading: isAccountLoading } = useAccount();
   const [user, setUser] = useState(undefined);
 
-  const [getVotePowerLoading, setGetVotePowerLoading] = useState(false);
-  const [getVotePowerError, setGetVotePowerError] = useState(null);
-  const [hasVotePower, setHasVotePower] = useState(null);
+  // const [getVotePowerLoading, setGetVotePowerLoading] = useState(false);
+  // const [getVotePowerError, setGetVotePowerError] = useState(null);
+  // const [hasVotePower, setHasVotePower] = useState(null);
 
   const [hasVotedReloadUi, setHasVotedReloadUi] = useState(false);
 
@@ -102,32 +100,6 @@ const Index = () => {
     return votes;
   };
 
-  const getVotePower = async contract => {
-    const data = await contract.registerToVote({ gasLimit: 2600000 });
-    console.log(data);
-    let receipt = await data.wait();
-    console.log(receipt);
-    return receipt;
-  };
-
-  // registerToVote validations -> isWeb3Citizen, !voted
-  const handleClaimVotePower = contract => {
-    setGetVotePowerLoading(true);
-    getVotePower(contract)
-      .then(result => {
-        console.log("getVotePower - successfull!", result);
-        setGetVotePowerError(null);
-        setHasVotePower(true);
-      })
-      .catch(error => {
-        console.log("getVotePower - error", error);
-        setGetVotePowerError(error.reason);
-        setHasVotePower(false);
-      })
-      .finally(() => {
-        setGetVotePowerLoading(false);
-      });
-  };
 
   // loads votes
   useEffect(() => {
@@ -173,14 +145,14 @@ const Index = () => {
           <main className="h-full w-full flex flex-col">
             <section className="w-full py-6 border-b-[1px] border-white/25 flex flex-col">
               <p className="text-lg 2xl:text-xl font-medium mb-3">
-                Instructions: To be able to vote on a proposal, you have to claim our NFT to be
-                validated as a active member of the community. Also, you have to claim vote power
-                for each proposal.
+                Instructions: To be able to vote on a proposal, you have to{" "}
+                <span className="text-cyan-400">claim our NFT </span> to be validated as a member of
+                the community. <span className="text-cyan-400">Your NFT will evolve </span> each
+                time you vote!. Active members will have their NFT as a proof-of-activity.{" "}
+                <span className="text-cyan-400">(</span>Be sure to refresh the metadata in open sea
+                to see the evolution!<span className="text-cyan-400">)</span>
               </p>
-              <p className="text-lg 2xl:text-xl font-medium mb-3">
-                Claim free Mumbai $MATIC to use this dapp: <a className="text-cyan-400" href="https://faucet.polygon.technology/" target="_blank">https://faucet.polygon.technology/</a>
-              </p>
-              <span className="flex items-center">
+              <span className="flex items-center mb-2">
                 <span className="text-cyan-400 relative top-[1px]">
                   <WarningIcon />
                 </span>
@@ -189,6 +161,16 @@ const Index = () => {
                   vote, connect and disconnect you wallet in the button from above. Thanks.
                 </p>
               </span>
+              <p className="text-lg 2xl:text-xl  mb-3">
+                Claim free Mumbai $MATIC to use this dapp:{" "}
+                <a
+                  className="text-cyan-400"
+                  href="https://faucet.polygon.technology/"
+                  target="_blank"
+                >
+                  https://faucet.polygon.technology/
+                </a>
+              </p>
             </section>
             <section className="w-full">
               <div className="flex justify-between items-center my-4">
@@ -210,46 +192,12 @@ const Index = () => {
                         <h3 className="text-xl font-medium">
                           {proposal.id}# - {proposal.title}
                         </h3>
-                        <Tooltip
-                          shadow={true}
-                          placement="bottom"
-                          content={
-                            getVotePowerLoading
-                              ? "Fetching on the blockchain for vote power..."
-                              : getVotePowerError
-                              ? "Error you dont hold the NFT or you have already voted in this proposal."
-                              : hasVotePower
-                              ? "You have the vote power!"
-                              : "Check if you have the nft and have not voted yet to get 1 vote power"
-                          }
-                          css={{
-                            borderRadius: "$sm",
-                            padding: "$4 $8",
-                            fontWeight: "$medium",
-                          }}
-                        >
-                          <button
-                            className="text-center w-44 border-[2px] rounded-lg px-4 py-3 font-semibold bg-[rgba(153,102,255,0.35)] border-[rgba(153,102,255,1)] hover:bg-[rgba(126,69,241,0.35)] hover:border-[rgba(127,63,255,1)] mr-4 relative cursor-pointer"
-                            onClick={() => handleClaimVotePower(ballotsWithSigners[index])}
-                          >
-                            {getVotePowerLoading
-                              ? "Loading.."
-                              : getVotePowerError
-                              ? "Error"
-                              : hasVotePower
-                              ? "Empowered!"
-                              : "Get vote power"}
-                          </button>
-                        </Tooltip>
                       </div>
 
                       <div className="h-full w-full flex items-center ">
                         <OptionsGroup
                           user={accountData?.address}
                           options={proposal.options}
-                          hasVotePower={hasVotePower}
-                          getVotePowerError={getVotePowerError}
-                          setHasVotedReloadUi={setHasVotedReloadUi}
                           ballotWithSigner={ballotsWithSigners[index]}
                         />
                         <Chart options={proposal.options} />
@@ -262,8 +210,6 @@ const Index = () => {
           </main>
           <footer className="mx-20 border-t-[1px] border-white/10 w-[100vw] h-[200px] box-border flex items-center justify-center">
             <div className="w-1/2 flex items-center justify-center flex-col">
-              {/* <Informative />
-              <h1 className="border-2">hola</h1> */}
               <p>
                 This project was made by {gonza}, {nacho}, {luke} for the Alchemy Hackathon.
               </p>
