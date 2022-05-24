@@ -11,6 +11,8 @@ import abi from "../smart-contracts/abi/BallotAbi.json";
 import { createBytes } from "../utils/functions.js";
 import WarningIcon from "../components/WarningIcon.jsx";
 
+// test
+
 const nacho = (
   <span className="text-teal-300">
     <Link href="https://twitter.com/cu_ouz">@cu_ouz</Link>
