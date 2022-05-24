@@ -4,46 +4,67 @@ import { useState } from "react";
 import { RadioGroup } from "@headlessui/react";
 import { Tooltip } from "@nextui-org/react";
 
-export default function OptionsGroup({
-  user,
-  openModal,
-  options,
-  className,
-  isVerified,
-  loadingVerification,
-  userHasVoted,
-}) {
+export default function OptionsGroup({ user, options, ballotWithSigner }) {
+  const [voteError, setVoteError] = useState(null);
+  const [voting, setVoting] = useState(false);
+  const [voted, setVoted] = useState(false);
+
+  const vote = async (optionName, contract) => {
+    console.log(optionName - 1);
+    const data = await contract.vote(optionName - 1, {
+      gasLimit: 2999999,
+    });
+    console.log(data);
+    let receipt = await data.wait();
+    console.log(receipt);
+    return receipt;
+  };
+
   const [selected, setSelected] = useState(null);
   const [isTimeLeft, setIsTimeLeft] = useState(true);
   const [time, setTime] = useState(0);
 
   useEffect(() => {
-    const countDownDate = new Date("May 22, 2022 23:59:59").getTime();
+    const countDownDate = new Date("May 23, 2022 22:30:00").getTime();
     const now = new Date().getTime();
 
     setTime(Date.now() + (countDownDate - now));
   }, []);
 
-  const handleSelect = (option) => {
+  const handleSelect = option => {
     if (user) {
       setSelected(option);
     }
   };
 
-  const handleVote = () => {
-    // to be able to vote the user has to be connected, be verified as a holder, and have a selected option.
-    if (user && isVerified && selected) {
-      openModal();
+  const handleVote = async () => {
+    if (user && selected) {
+      const selectedOption = await options.find(option => option.id === selected);
+      setVoting(true);
+      vote(selectedOption.id, ballotWithSigner)
+        .then(result => {
+          console.log(result);
+          setVoted(true);
+          // setHasVotedReloadUi(hasVotedReloadUi => !hasVotedReloadUi);
+          setVoteError(null);
+        })
+        .catch(error => {
+          console.log(error);
+          setVoteError(error.reason);
+        })
+        .finally(() => {
+          setVoting(false);
+        });
     }
   };
 
   return (
-    <div className={`w-full ${className}`}>
+    <div className={`w-full`}>
       <div className="mx-auto w-full max-w-md">
         <RadioGroup value={selected} onChange={handleSelect}>
           <RadioGroup.Label className="sr-only">Server size</RadioGroup.Label>
           <div className="space-y-3">
-            {options.map((option) => (
+            {options.map(option => (
               <RadioGroup.Option
                 key={option.name}
                 value={option.id}
@@ -64,19 +85,18 @@ export default function OptionsGroup({
                         <div className="text-sm">
                           <RadioGroup.Label
                             as="p"
-                            className={`font-medium text-base mb-1  ${
-                              checked ? "text-white" : "text-gray-900"
+                            className={`font-medium text-base mb-2 flex ${
+                              checked ? "text-white" : "text-gray-700"
                             }`}
                           >
-                            {option.name}
+                            <p className="mr-[16rem]">{option.name}</p>
+                            <p>votes: {option.votes}</p>
                           </RadioGroup.Label>
                           <RadioGroup.Description
                             as="span"
-                            className={`inline ${
-                              checked ? "text-sky-100" : "text-gray-500"
-                            }`}
+                            className={`flex ${checked ? "text-sky-100" : "text-gray-900"}`}
                           >
-                            <span className="mr-8">{option.description}</span>
+                            <p className="">{option.description}</p>
                           </RadioGroup.Description>
                         </div>
                       </div>
@@ -93,121 +113,71 @@ export default function OptionsGroup({
           </div>
         </RadioGroup>
         <div className="flex justify-between mt-5">
-          {user && !loadingVerification && isVerified && (
+          {isTimeLeft ? (
             <>
-              {isTimeLeft ? (
-                // votation still going on
-                <Tooltip
-                  shadow={true}
-                  placement="bottom"
-                  content={selected ? "" : "Select an option to vote"}
-                  css={{
-                    borderRadius: "$sm",
-                    padding: "$4 $8",
-                    fontWeight: "$medium",
-                  }}
-                >
-                  <button
-                    disabled={userHasVoted}
-                    onClick={handleVote}
-                    className="font-semibold w-48 py-2 rounded-lg cursor-pointer
+              {/* votation still going on */}
+              <Tooltip
+                shadow={true}
+                placement="bottom"
+                content={
+                  user ? (
+                    !voted ? (
+                      !voting ? (
+                        !voteError ? (
+                          selected ? (
+                            "Click to emit the vote!"
+                          ) : (
+                            "Select an option to emit a vote"
+                          )
+                        ) : (
+                          "Error. check if you hold the nft or if you have already voted."
+                        )
+                      ) : (
+                        "Voting on the blockchain..."
+                      )
+                    ) : (
+                      <span className="flex items-center justify-center flex-col">
+                        <p>Voted succesfully!, if the UI doesn't reload, do it manually. Thanks.</p>
+                        <p>
+                          You NFT evolved!, go to open sea and refresh the metadata to see the
+                          evolution!
+                        </p>
+                      </span>
+                    )
+                  ) : (
+                    "Connect wallet to emit a vote."
+                  )
+                }
+                css={{
+                  borderRadius: "$sm",
+                  padding: "$4 $8",
+                  fontWeight: "$medium",
+                }}
+              >
+                <button
+                  onClick={() => handleVote()} // FALTA HANDELEAR EL PASARLE EL CONTRATO CORRECTO.
+                  className="font-semibold w-48 py-2 rounded-lg cursor-pointer
                     bg-[rgba(255,174,0,0.7)] border-[2px] border-[rgb(255,174,0)]/[1] drop-shadow-[0_0_5px_rgba(255,174,0,1)]"
-                  >
-                    {userHasVoted ? "You're already voted" : "Vote!"}
-                  </button>
-                </Tooltip>
-              ) : (
-                // votation has ended => show winner
-                <button
-                  disabled
-                  className="w-full cursor-default font-semibold py-2 rounded-lg border-[2px] border-[rgb(255,174,0)]/[1] drop-shadow-[0_0_5px_rgba(255,174,0,1)]"
                 >
-                  VOTE HAS ENDED
+                  {voted ? "Voted!" : voting ? "Voting..." : voteError ? "Error" : "Vote"}
                 </button>
-              )}
+              </Tooltip>
             </>
-          )}
-          {user && !loadingVerification && !isVerified && (
-            <>
-              {isTimeLeft ? (
-                // votation still going on
-                <Tooltip
-                  shadow={true}
-                  placement="bottom"
-                  content={"You need to have the NFT to be able to vote."}
-                  css={{
-                    borderRadius: "$sm",
-                    padding: "$4 $8",
-                    fontWeight: "$medium",
-                  }}
-                >
-                  <button
-                    disabled={userHasVoted}
-                    className="font-semibold w-48 py-2 rounded-lg
-                    bg-[rgba(255,174,0,0.7)] border-[2px] border-[rgb(255,174,0)]/[1] drop-shadow-[0_0_5px_rgba(255,174,0,1)] cursor-pointer"
-                  >
-                    {userHasVoted ? "You're already voted" : "Vote!"}
-                  </button>
-                </Tooltip>
-              ) : (
-                //votation has finished
-                <button
-                  disabled
-                  className="w-full cursor-default font-semibold py-2 rounded-lg border-[2px] border-[rgb(255,174,0)]/[1] drop-shadow-[0_0_5px_rgba(255,174,0,1)]"
-                >
-                  VOTE HAS ENDED
-                </button>
-              )}
-            </>
-          )}
-          {user && loadingVerification && (
-            <Tooltip
-              shadow={true}
-              placement="bottom"
-              content={"Verifiyng in the blockchain if you have the NFT.."}
-              css={{
-                borderRadius: "$sm",
-                padding: "$4 $8",
-                fontWeight: "$medium",
-              }}
+          ) : (
+            // votation has ended => show winner
+            <button
+              disabled
+              className="w-full cursor-default font-semibold py-2 rounded-lg border-[2px] border-[rgb(255,174,0)]/[1] drop-shadow-[0_0_5px_rgba(255,174,0,1)]"
             >
-              <button
-                className="cursor-default font-semibold w-36 py-2 rounded-lg
-                bg-[rgba(255,174,0,0.7)] border-[2px] border-[rgb(255,174,0)]/[1] drop-shadow-[0_0_5px_rgba(255,174,0,1)]"
-              >
-                Loading...
-              </button>
-            </Tooltip>
+              VOTE HAS ENDED
+            </button>
           )}
-          {!user && (
-            <Tooltip
-              shadow={true}
-              placement="bottom"
-              content={"Verifiyng in the blockchain if you have the NFT.."}
-              css={{
-                borderRadius: "$sm",
-                padding: "$4 $8",
-                fontWeight: "$medium",
-              }}
-            >
-              <button
-                className="cursor-default font-semibold w-36 py-2 rounded-lg
-                bg-[rgba(255,174,0,0.7)] border-[2px] border-[rgb(255,174,0)]/[1] drop-shadow-[0_0_5px_rgba(255,174,0,1)]"
-              >
-                LOGIN
-              </button>
-            </Tooltip>
-          )}
+
           {isTimeLeft && (
             <div className="cursor-default font-semibold py-2 w-[10.75rem] flex items-center justify-center rounded-lg drop-shadow-[0_0_5px_rgba(75,192,192,1)]">
               <p className="font-semibold">
                 Time left:{" "}
-                {time != 0 && (
-                  <Countdown
-                    date={time}
-                    onComplete={() => setIsTimeLeft(false)}
-                  />
-                )}
+                {time != 0 && <Countdown date={time} onComplete={() => setIsTimeLeft(false)} />}
               </p>
             </div>
           )}
