@@ -24,7 +24,7 @@ export default function OptionsGroup({ user, options, ballotWithSigner }) {
   const [time, setTime] = useState(0);
 
   useEffect(() => {
-    const countDownDate = new Date("May 23, 2022 22:30:00").getTime();
+    const countDownDate = new Date("May 28, 2022 22:30:00").getTime();
     const now = new Date().getTime();
 
     setTime(Date.now() + (countDownDate - now));

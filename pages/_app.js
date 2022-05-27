@@ -14,7 +14,7 @@ import { NextUIProvider } from "@nextui-org/react";
 
 const { chains, provider } = configureChains(
   [chain.polygonMumbai],
-  [apiProvider.alchemy(process.env.ALCHEMY_ID), apiProvider.fallback()]
+  [apiProvider.alchemy("Z_ZtzOdwRjDpqbmrKXYR6RrIzoUZPwA4"), apiProvider.fallback()]
 );
 
 const { connectors } = getDefaultWallets({
