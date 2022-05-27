@@ -45,7 +45,6 @@ export default function OptionsGroup({ user, options, ballotWithSigner }) {
         .then(result => {
           console.log(result);
           setVoted(true);
-          // setHasVotedReloadUi(hasVotedReloadUi => !hasVotedReloadUi);
           setVoteError(null);
         })
         .catch(error => {

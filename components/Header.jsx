@@ -2,7 +2,7 @@ import React from "react";
 import WarningIcon from "../components/WarningIcon.jsx";
 import MintNFT from "../components/MintNFT";
 
-const Header = ({ NFT, loadingNFT }) => {
+const Header = ({ NFT, loadingNFT, user }) => {
   return (
     <header className="w-full border-b-[1px] border-white/25 py-6 flex items-center">
       <div className="w-10/12">
@@ -36,19 +36,22 @@ const Header = ({ NFT, loadingNFT }) => {
         </p>
       </div>
       <div className="w-3/12 2xl:w-2/12">
-        {!loadingNFT && NFT && (
+        {/* if the user is not connected, show nothing.  */}
+        {user && !loadingNFT && NFT && (
           <div className="flex flex-col items-center bg-gray-800 rounded-xl px-4 py-2 ">
             <h3>{NFT.name}</h3>
             <img className="bg-purple-700/20 rounded-xl my-1" src={NFT.image} alt="" />
             <p className="text-cyan-300">{NFT.description}</p>
           </div>
         )}
-        {!loadingNFT && !NFT && (
-          <div>
+        {user && !loadingNFT && !NFT && (
+          <div className="flex flex-col items-center justify-center bg-gray-800 rounded-xl px-4 py-4">
+            <h3 className="text-lg mb-4">You don't hold the nft .</h3>
             <MintNFT NFT={NFT} loadingNFT={loadingNFT} user={user} />
+            <p className="text-cyan-300 mt-1">Be a member of the community!</p>
           </div>
         )}
-        {loadingNFT && (
+        {user && loadingNFT && (
           <div>
             <p>Loading...</p>
           </div>

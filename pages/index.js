@@ -54,7 +54,10 @@ const Index = () => {
           console.log(data.ownedNfts[0].metadata);
           setNFT(data.ownedNfts[0].metadata);
         })
-        .catch(error => console.log(error))
+        .catch(error => {
+          console.log(error);
+          setNFT(undefined);
+        })
         .finally(() => {
           setLoadingNFT(false);
         });
@@ -145,7 +148,7 @@ const Index = () => {
               <div className="flex justify-between items-center my-4">
                 <h2 className="text-2xl font-medium">Projects being voted:</h2>
               </div>
-              {options && !isAccountLoading && (
+              {!loadingOptions && options && (
                 <>
                   {options.map((proposal, index) => (
                     <article
@@ -169,6 +172,8 @@ const Index = () => {
                   ))}
                 </>
               )}
+              {!loadingOptions && !options && <p>Error ocurred at fetching options</p>}
+              {loadingOptions && <p>loading options...</p>}
             </section>
           </main>
           <Footer />
