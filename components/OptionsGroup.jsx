@@ -10,7 +10,6 @@ export default function OptionsGroup({ user, options, ballotWithSigner }) {
   const [voted, setVoted] = useState(false);
 
   const vote = async (optionName, contract) => {
-    console.log(optionName - 1);
     const data = await contract.vote(optionName - 1, {
       gasLimit: 2999999,
     });
@@ -38,6 +37,7 @@ export default function OptionsGroup({ user, options, ballotWithSigner }) {
   };
 
   const handleVote = async () => {
+    console.log(user)
     if (user && selected) {
       const selectedOption = await options.find(option => option.id === selected);
       setVoting(true);
@@ -83,7 +83,7 @@ export default function OptionsGroup({ user, options, ballotWithSigner }) {
                       <div className="flex items-center">
                         <div className="text-sm">
                           <RadioGroup.Label
-                            as="p"
+                            as="span"
                             className={`font-medium text-base mb-2 flex ${
                               checked ? "text-white" : "text-gray-700"
                             }`}

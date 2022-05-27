@@ -7,7 +7,7 @@ import "@openzeppelin/contracts/utils/Strings.sol";
 import "@openzeppelin/contracts/utils/Base64.sol";
 import "hardhat/console.sol";
 
-// Deployed to 0x652a6302420D94F707b7Ad9Ae6eFc9E849805605
+// Deployed to 0x4Eed0b565D57DB5D7A103Dc751104e03897cfcA0
 contract Web3Citizen is ERC721URIStorage {
 
     using Strings for uint256;

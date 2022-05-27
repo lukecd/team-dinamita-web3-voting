@@ -1,8 +1,39 @@
-import React from "react";
-import WarningIcon from "../components/WarningIcon.jsx";
+import React, { useEffect } from "react";
+// import WarningIcon from "../components/WarningIcon.jsx";
 import MintNFT from "../components/MintNFT";
+import { useContract, useProvider, useSigner } from "wagmi";
+import nAbi from "../smart-contracts/artifacts/contracts/Web3Citizen.sol/Web3Citizen.json";
+import { nftAddress } from "../pages/index.js";
+const nftAbi = nAbi.abi;
 
 const Header = ({ NFT, loadingNFT, user }) => {
+  const { data: signer, isError: isSignerError, isLoading: isSignerLoading } = useSigner();
+  const nftWithSigner = useContract({
+    addressOrName: nftAddress,
+    contractInterface: nftAbi,
+    signerOrProvider: signer,
+  });
+
+  const getVoteCount = async contract => {
+    const data = await contract.getVoteCount();
+    // const votes = await data.toNumber();
+    return data;
+  };
+
+  useEffect(() => {
+    console.log(user);
+    console.log(signer);
+    if (user && !isSignerLoading) {
+      getVoteCount(nftWithSigner)
+        .then(data => {
+          console.log("the data is", data);
+        })
+        .catch(error => {
+          console.log(error);
+        });
+    }
+  }, [user, isSignerLoading]);
+
   return (
     <header className="w-full border-b-[1px] border-white/25 py-6 flex items-center">
       <div className="w-10/12">

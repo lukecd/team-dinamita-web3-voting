@@ -7,16 +7,18 @@ import Header from "../components/Header.jsx";
 import Footer from "../components/Footer.jsx";
 
 import { useAccount, useContract, useProvider, useSigner } from "wagmi";
-import abi from "../smart-contracts/abi/BallotAbi.json";
 import { createBytes } from "../utils/functions.js";
-
-const API_KEY = "Z_ZtzOdwRjDpqbmrKXYR6RrIzoUZPwA4";
+import bAbi from "../smart-contracts/abi/BallotAbi.json";
+import nAbi from "../smart-contracts/artifacts/contracts/Web3Citizen.sol/Web3Citizen.json";
 
 export const nftAddress = "0x4Eed0b565D57DB5D7A103Dc751104e03897cfcA0"; // nft contract
+// sin 
+const API_KEY = "Z_ZtzOdwRjDpqbmrKXYR6RrIzoUZPwA4";
+
 const ballot1Address = "0x7529C3E807d35B04241486e52796830eDB20EA8c";
 const ballot2Address = "0xd46f127d31f1BDb5Adb03A8cF363d89a8CBdd04c";
 const ballot3Address = "0x590c8AEE99943Eb65817D461ED1d3c23119aA2F0";
-const ballotAbi = abi;
+export const ballotAbi = bAbi;
 
 const Index = () => {
   const proposals = proposalsData;
@@ -51,8 +53,12 @@ const Index = () => {
       setLoadingNFT(true);
       fetchNFT()
         .then(data => {
-          console.log(data.ownedNfts[0].metadata);
-          setNFT(data.ownedNfts[0].metadata);
+          if (data.ownedNfts.length > 0) {
+            console.log(data.ownedNfts[0].metadata);
+            setNFT(data.ownedNfts[0].metadata);
+          } else {
+            setNFT(undefined);
+          }
         })
         .catch(error => {
           console.log(error);

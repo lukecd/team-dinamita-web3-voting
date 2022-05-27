@@ -2,10 +2,8 @@ import { Tooltip, Loading } from "@nextui-org/react";
 import React, { useState } from "react";
 import { useContract, useSigner } from "wagmi";
 import { nftAddress } from "../pages";
-
-import abi from "../smart-contracts/artifacts/contracts/Web3Citizen.sol/Web3Citizen.json";
-
-const nftAbi = abi.abi;
+import nAbi from "../smart-contracts/artifacts/contracts/Web3Citizen.sol/Web3Citizen.json";
+const nftAbi = nAbi.abi;
 
 const MintNFT = ({ user, NFT, loadingNFT }) => {
   const [mintingNft, setMintingNft] = useState(false);
@@ -20,9 +18,11 @@ const MintNFT = ({ user, NFT, loadingNFT }) => {
   });
 
   const mintNft = async () => {
+    console.log("calling mint");
     const data = await nftWithSigner.mint({
       gasLimit: 5000000,
     });
+    console.log("called mint");
     console.log(data);
     let receipt = await data.wait();
     console.log(receipt);
@@ -93,9 +93,9 @@ const MintNFT = ({ user, NFT, loadingNFT }) => {
             ) : minted ? (
               "Minted"
             ) : mintingNftError === null ? (
-              "Mint the NFT!"
+              "Mint the NFT"
             ) : (
-              "Error"
+              "Error, try again"
             )}
           </button>
         </Tooltip>
