@@ -1,13 +1,13 @@
 import { Tooltip, Loading } from "@nextui-org/react";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useContract, useSigner } from "wagmi";
+import { nftAddress } from "../pages";
 
 import abi from "../smart-contracts/artifacts/contracts/Web3Citizen.sol/Web3Citizen.json";
 
-const nftAddress = "0x4Eed0b565D57DB5D7A103Dc751104e03897cfcA0"; // nft contract
 const nftAbi = abi.abi;
 
-const MintNFT = ({ user }) => {
+const MintNFT = ({ user, NFT, loadingNFT }) => {
   const [mintingNft, setMintingNft] = useState(false);
   const [mintingNftError, setMintingNftError] = useState(null);
   const [minted, setMinted] = useState(false);
@@ -51,7 +51,7 @@ const MintNFT = ({ user }) => {
   return (
     <>
       {/* only connected users can see the Mint button. */}
-      {user && (
+      {user && !loadingNFT && !NFT && (
         <Tooltip
           shadow={true}
           placement="bottom"
@@ -83,6 +83,37 @@ const MintNFT = ({ user }) => {
         >
           <button
             onClick={handleMintNft}
+            disabled={NFT}
+            className={`text-center w-44 border-[2px] rounded-lg px-4 py-3 font-semibold bg-[rgba(153,102,255,0.35)] border-[rgba(153,102,255,1)] hover:bg-[rgba(126,69,241,0.35)] hover:border-[rgba(127,63,255,1)] mr-4 relative cursor-pointer`}
+          >
+            {mintingNft ? (
+              <Loading color="secondary" size="sm" />
+            ) : minted ? (
+              "Minted"
+            ) : mintingNftError === null ? (
+              "Mint the NFT!"
+            ) : (
+              "Error"
+            )}
+          </button>
+        </Tooltip>
+      )}
+
+      {user && !loadingNFT && NFT && (
+        <Tooltip
+          shadow={true}
+          placement="bottom"
+          content={"You already have the NFT!"}
+          css={{
+            borderRadius: "$sm",
+            padding: "$4 $8",
+            fontWeight: "$medium",
+            textAlign: "center",
+          }}
+        >
+          <button
+            onClick={handleMintNft}
+            disabled={NFT}
             className={`text-center w-44 border-[2px] rounded-lg px-4 py-3 font-semibold bg-[rgba(153,102,255,0.35)] border-[rgba(153,102,255,1)] hover:bg-[rgba(126,69,241,0.35)] hover:border-[rgba(127,63,255,1)] mr-4 relative cursor-pointer`}
           >
             {mintingNft ? (
