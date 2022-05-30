@@ -130,6 +130,7 @@ contract Ballot {
      */
     function vote(uint optionID) public {
         // check to see if we've registered them to vote
+        
         if(_registeredVoters[msg.sender] == 0) {
             _registeredVoters[msg.sender] = 1;
             voters[msg.sender].weight = 1;

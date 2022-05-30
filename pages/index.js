@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { proposalsData } from "../utils/proposals.js";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import OptionsGroup from "/components/OptionsGroup.jsx";
@@ -9,11 +9,6 @@ import Footer from "../components/Footer.jsx";
 import { useAccount, useContract, useProvider, useSigner } from "wagmi";
 import { createBytes } from "../utils/functions.js";
 import bAbi from "../smart-contracts/abi/BallotAbi.json";
-import nAbi from "../smart-contracts/artifacts/contracts/Web3Citizen.sol/Web3Citizen.json";
-
-export const nftAddress = "0x4Eed0b565D57DB5D7A103Dc751104e03897cfcA0"; // nft contract
-// sin 
-const API_KEY = "Z_ZtzOdwRjDpqbmrKXYR6RrIzoUZPwA4";
 
 const ballot1Address = "0x7529C3E807d35B04241486e52796830eDB20EA8c";
 const ballot2Address = "0xd46f127d31f1BDb5Adb03A8cF363d89a8CBdd04c";
@@ -22,53 +17,14 @@ export const ballotAbi = bAbi;
 
 const Index = () => {
   const proposals = proposalsData;
-  const [options, setOptions] = useState([]);
-  const [loadingOptions, setLoadingOptions] = useState(true);
+  const [fetchedProposals, setFetchedProposals] = useState([]);
+  const [loadingFetchedProposals, setloadingFetchedProposals] = useState(true);
 
-  const [NFT, setNFT] = useState([]);
-  const [loadingNFT, setLoadingNFT] = useState(true);
+  // vote notif
+  const [voteNotif, setVoteNotif] = useState(false);
 
   // manage access
-  const { data: accountData, isError, isLoading: isAccountLoading } = useAccount();
-  const [user, setUser] = useState(undefined);
-  useEffect(() => {
-    if (accountData && !isAccountLoading) {
-      setUser(accountData.address);
-    } else setUser(undefined);
-  }, [accountData]);
-
-  // fetch nft
-  const fetchNFT = async () => {
-    const baseURL = `https://polygon-mumbai.g.alchemyapi.io/v2/${API_KEY}/getNFTs/`;
-    var requestOptions = {
-      method: "GET",
-    };
-    const fetchURL = `${baseURL}?owner=${user}&contractAddresses%5B%5D=${nftAddress}`;
-    let response = await fetch(fetchURL, requestOptions);
-    response = await response.json();
-    return response;
-  };
-  useEffect(() => {
-    if (user) {
-      setLoadingNFT(true);
-      fetchNFT()
-        .then(data => {
-          if (data.ownedNfts.length > 0) {
-            console.log(data.ownedNfts[0].metadata);
-            setNFT(data.ownedNfts[0].metadata);
-          } else {
-            setNFT(undefined);
-          }
-        })
-        .catch(error => {
-          console.log(error);
-          setNFT(undefined);
-        })
-        .finally(() => {
-          setLoadingNFT(false);
-        });
-    }
-  }, [user]);
+  const { data: accountData, isError, isLoading: loadingAccount } = useAccount({ suspense: true });
 
   // contracts data
   const provider = useProvider();
@@ -113,28 +69,34 @@ const Index = () => {
     const votes = await data.toNumber();
     return votes;
   };
+  // this should only be executed once. No prior conditions.
   useEffect(() => {
-    const fetchedProposals = [];
-    proposals.forEach((proposal, index) => {
-      const fetchedOptions = [];
-      proposal.options.forEach(async option => {
-        await getVotes(option.name, ballotsWithProviders[index])
-          .then(votes => {
-            fetchedOptions.push({ ...option, votes: votes });
-          })
-          .catch(error => console.log(error));
-      });
-      fetchedProposals.push({
+    console.log("running");
+    const arrayProposals = [];
+    for (let [index, proposal] of proposals.entries()) {
+      const arrayOptions = [];
+      for (let [index2, option] of proposal.options.entries()) {
+        const func = async () => {
+          await getVotes(option.name, ballotsWithProviders[index])
+            .then(votes => {
+              arrayOptions[index2] = { ...option, votes: votes };
+            })
+            .catch(error => console.log(error));
+        };
+        func();
+      }
+      arrayProposals[index] = {
         title: proposal.title,
         id: proposal.id,
         timeEnd: proposal.timeEnd,
-        options: fetchedOptions,
-      });
-    });
-    setOptions(fetchedProposals);
-    setLoadingOptions(false);
+        options: arrayOptions,
+      };
+    }
+    console.log(arrayProposals);
+    setFetchedProposals(arrayProposals);
+    setloadingFetchedProposals(false);
     return () => {
-      console.log("bye");
+      console.log("desmounting useEffect");
     };
   }, []);
 
@@ -142,44 +104,56 @@ const Index = () => {
     <>
       <div className="h-full bg-gradient w-full flex items-center justify-center font-Inter text-white">
         {/* page container -> aprox 80% width.  */}
-        <div className="h-full w-10/12 flex flex-col items-center">
+        <div className="h-full min-h-[100vh]  w-10/12 flex flex-col items-center">
           <nav className="h-20 w-full flex items-center justify-between relative border-b-[1px] border-[rgba(255,255,255,0.25)]">
             <h1 className="text-3xl font-medium">NFT-gated voting system 🦄🌌</h1>
             <ConnectButton />
           </nav>
           {/* Header displays Info and shows the user NFT. */}
-          <Header user={user} NFT={NFT} loadingNFT={loadingNFT} />
+          <Header
+            accountData={accountData}
+            loadingAccount={loadingAccount}
+            voteNotif={voteNotif}
+            // setVoteNotif={setVoteNotif}
+          />
           <main className="h-full w-full flex flex-col">
             <section className="w-full">
               <div className="flex justify-between items-center my-4">
                 <h2 className="text-2xl font-medium">Projects being voted:</h2>
               </div>
-              {!loadingOptions && options && (
-                <>
-                  {options.map((proposal, index) => (
-                    <article
-                      key={index}
-                      className={`border-t-[1px] border-[rgba(255,255,255,0.25)] pt-6 2xl:pt-7 mb-8`}
-                    >
-                      <div className="flex items-center justify-between w-full mb-3">
-                        <h3 className="text-xl font-medium">
-                          {proposal.id}# - {proposal.title}
-                        </h3>
-                      </div>
-                      <div className="h-full w-full flex items-center ">
-                        <OptionsGroup
-                          user={accountData?.address}
-                          options={proposal.options}
-                          ballotWithSigner={ballotsWithSigners[index]}
-                        />
-                        <Chart options={proposal.options} />
-                      </div>
-                    </article>
-                  ))}
-                </>
+              {!loadingAccount &&
+                accountData &&
+                !loadingFetchedProposals &&
+                fetchedProposals.length > 0 && (
+                  <>
+                    {fetchedProposals.map(proposal => (
+                      <article
+                        key={proposal.id}
+                        className={`border-t-[1px] border-[rgba(255,255,255,0.25)] pt-6 2xl:pt-7 mb-8`}
+                      >
+                        <div className="flex items-center justify-between w-full mb-3">
+                          <h3 className="text-xl font-medium">
+                            {proposal.id}# - {proposal.title}
+                          </h3>
+                        </div>
+                        <div className="h-full w-full flex items-center ">
+                          <OptionsGroup
+                            accountData={accountData}
+                            loadingAccount={loadingAccount}
+                            options={proposal.options}
+                            ballotWithSigner={ballotsWithSigners[proposal.id - 1]}
+                            setVoteNotif={setVoteNotif}
+                          />
+                          <Chart options={proposal.options} />
+                        </div>
+                      </article>
+                    ))}
+                  </>
+                )}
+              {!loadingFetchedProposals && !fetchedProposals && (
+                <p>Error ocurred at fetching options</p>
               )}
-              {!loadingOptions && !options && <p>Error ocurred at fetching options</p>}
-              {loadingOptions && <p>loading options...</p>}
+              {loadingFetchedProposals && <p>loading options...</p>}
             </section>
           </main>
           <Footer />

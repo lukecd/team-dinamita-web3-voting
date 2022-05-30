@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 import { Doughnut } from "react-chartjs-2";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
-export default function Chart({ options }) {
+function Chart({ options }) {
   const [windowSize, setWindowSize] = useState({
     width: undefined,
     height: undefined,
@@ -63,3 +63,5 @@ export default function Chart({ options }) {
     </div>
   );
 }
+
+export default React.memo(Chart);

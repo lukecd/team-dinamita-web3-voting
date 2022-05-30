@@ -1,106 +1,61 @@
 import { Tooltip, Loading } from "@nextui-org/react";
-import React, { useState } from "react";
-import { useContract, useSigner } from "wagmi";
-import { nftAddress } from "../pages";
-import nAbi from "../smart-contracts/artifacts/contracts/Web3Citizen.sol/Web3Citizen.json";
-const nftAbi = nAbi.abi;
+import React from "react";
 
-const MintNFT = ({ user, NFT, loadingNFT }) => {
-  const [mintingNft, setMintingNft] = useState(false);
-  const [mintingNftError, setMintingNftError] = useState(null);
-  const [minted, setMinted] = useState(false);
+const MintNFT = ({
+  minted,
+  setMinted,
+  mintingNft,
+  setMintingNft,
+  mintingNftError,
+  setMintingNftError,
+  handleMintNft,
+}) => {
+  // if this component is rendered, the user is loged, nothing is loading and the dosn't have the nft yet.
 
-  const { data: signer, isError: isSignerError, isLoading: isSignerLoading } = useSigner();
-  const nftWithSigner = useContract({
-    addressOrName: nftAddress,
-    contractInterface: nftAbi,
-    signerOrProvider: signer,
-  });
-
-  const mintNft = async () => {
-    console.log("calling mint");
-    const data = await nftWithSigner.mint({
-      gasLimit: 5000000,
-    });
-    console.log("called mint");
-    console.log(data);
-    let receipt = await data.wait();
-    console.log(receipt);
-    return receipt;
-  };
-
-  const handleMintNft = () => {
-    if (user) {
-      setMintingNft(true);
-      mintNft()
-        .then(result => {
-          console.log("handleMintNft- successfull!", result);
-          setMintingNftError(null);
-          setMinted(true);
-        })
-        .catch(error => {
-          console.log("handleMintNft - error ", error.reason);
-          console.log(error);
-          setMintingNftError(error.message);
-        })
-        .finally(() => {
-          setMintingNft(false);
-        });
-    }
-  };
   return (
-    <>
-      {!loadingNFT && !NFT && (
-        <Tooltip
-          shadow={true}
-          placement="bottom"
-          content={
-            mintingNft ? (
-              "minting ... "
-            ) : minted ? (
-              <a
-                className="flex items-center justify-center flex-col"
-                href={`https://testnets.opensea.io/${user}`}
-                target="_blank"
-              >
-                <p className="">Minted the NFT successfuly.</p>
-                <p className="text-cyan-400">Click here to see your new NFT in open sea!</p>
-                <p> ( It will take 1min for opensea to load it. )</p>
-              </a>
-            ) : mintingNftError !== null ? (
-              "Transaction failed. Check if you already have the NFT. You can only mint one. If you dont have one yet, it must be that you dont have enough gas to mint. Around 0.07 matic is needed."
-            ) : (
-              <p className="font-medium p-0 m-0">
-                Mint this test-net NFT to be a member of the community and be able to vote. <br />
-                You can only mint one.
-              </p>
-            )
-          }
-          css={{
-            borderRadius: "$sm",
-            padding: "$4 $8",
-            fontWeight: "$medium",
-            textAlign: "center",
-          }}
-        >
-          <button
-            onClick={handleMintNft}
-            disabled={NFT}
-            className={`text-center w-44 border-[2px] rounded-lg px-4 py-3 font-semibold bg-[rgba(153,102,255,0.35)] border-[rgba(153,102,255,1)] hover:bg-[rgba(126,69,241,0.35)] hover:border-[rgba(127,63,255,1)] cursor-pointer`}
-          >
-            {mintingNft ? (
-              <Loading color="secondary" size="sm" />
-            ) : minted ? (
-              "Minted"
-            ) : mintingNftError === null ? (
-              "Mint the NFT"
-            ) : (
-              "Error, try again"
-            )}
-          </button>
-        </Tooltip>
-      )}
-    </>
+    <Tooltip
+      shadow={true}
+      placement="bottom"
+      content={
+        mintingNft ? (
+          "minting... "
+        ) : mintingNftError !== null ? (
+          <p className="font-medium">
+            Transaction failed. <br />
+            Check if you have enought gas. <br />
+            Around 0.07 matic is needed.
+            <br />
+            Check if you already have the NFT. <br />
+            You can only mint one.
+            <br />
+          </p>
+        ) : (
+          <p className="font-medium p-0 m-0">
+            Mint the NFT to be able to vote. <br />
+            You can only mint one.
+          </p>
+        )
+      }
+      css={{
+        borderRadius: "$sm",
+        padding: "$4 $8",
+        fontWeight: "$medium",
+        textAlign: "center",
+      }}
+    >
+      <button
+        onClick={handleMintNft}
+        className={`text-center w-[180px] h-[52px] rounded-lg border-[2px] font-semibold bg-[rgba(153,102,255,0.35)] border-[rgba(153,102,255,1)] hover:bg-[rgba(126,69,241,0.35)] hover:border-[rgba(127,63,255,1)] cursor-pointer flex items-center justify-center`}
+      >
+        {mintingNft ? (
+          <Loading color="secondary" size="md" />
+        ) : mintingNftError === null ? (
+          "Mint the NFT"
+        ) : (
+          "Error, try again"
+        )}
+      </button>
+    </Tooltip>
   );
 };
 

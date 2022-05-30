@@ -1,17 +1,22 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useMemo } from "react";
 import Countdown from "react-countdown";
 import { useState } from "react";
 import { RadioGroup } from "@headlessui/react";
 import { Tooltip } from "@nextui-org/react";
+import { useRouter } from "next/router";
 
-export default function OptionsGroup({ user, options, ballotWithSigner }) {
+function OptionsGroup({ accountData, loadingAccount, options, ballotWithSigner, setVoteNotif }) {
+  const router = useRouter();
   const [voteError, setVoteError] = useState(null);
   const [voting, setVoting] = useState(false);
   const [voted, setVoted] = useState(false);
+  const [selected, setSelected] = useState(null);
+  const [isTimeLeft, setIsTimeLeft] = useState(true);
+  const [time, setTime] = useState(0);
 
-  const vote = async (optionName, contract) => {
-    const data = await contract.vote(optionName - 1, {
-      gasLimit: 2999999,
+  const vote = async (optionID, contract) => {
+    const data = await contract.vote(optionID, {
+      gasLimit: 5999999,
     });
     console.log(data);
     let receipt = await data.wait();
@@ -19,32 +24,30 @@ export default function OptionsGroup({ user, options, ballotWithSigner }) {
     return receipt;
   };
 
-  const [selected, setSelected] = useState(null);
-  const [isTimeLeft, setIsTimeLeft] = useState(true);
-  const [time, setTime] = useState(0);
-
   useEffect(() => {
     const countDownDate = new Date("May 28, 2022 22:30:00").getTime();
     const now = new Date().getTime();
-
     setTime(Date.now() + (countDownDate - now));
   }, []);
 
   const handleSelect = option => {
-    if (user) {
+    if (accountData) {
       setSelected(option);
     }
   };
 
   const handleVote = async () => {
-    console.log(user)
-    if (user && selected) {
+    if (accountData && selected) {
+      setVoted(false);
       const selectedOption = await options.find(option => option.id === selected);
       setVoting(true);
-      vote(selectedOption.id, ballotWithSigner)
+      console.log(selectedOption.id - 1);
+      vote(selectedOption.id - 1, ballotWithSigner)
         .then(result => {
           console.log(result);
           setVoted(true);
+          setVoteNotif(Math.random() * 2);
+          // router.reload();
           setVoteError(null);
         })
         .catch(error => {
@@ -65,7 +68,7 @@ export default function OptionsGroup({ user, options, ballotWithSigner }) {
           <div className="space-y-3">
             {options.map(option => (
               <RadioGroup.Option
-                key={option.name}
+                key={option.id}
                 value={option.id}
                 className={({ active, checked }) =>
                   `${active ? "" : ""}
@@ -119,7 +122,7 @@ export default function OptionsGroup({ user, options, ballotWithSigner }) {
                 shadow={true}
                 placement="bottom"
                 content={
-                  user ? (
+                  accountData ? (
                     !voted ? (
                       !voting ? (
                         !voteError ? (
@@ -136,10 +139,9 @@ export default function OptionsGroup({ user, options, ballotWithSigner }) {
                       )
                     ) : (
                       <span className="flex items-center justify-center flex-col">
-                        <p>Voted succesfully!, if the UI doesn't reload, do it manually. Thanks.</p>
-                        <p>
-                          You NFT evolved!, go to open sea and refresh the metadata to see the
-                          evolution!
+                        <p className="font-medium">Vote succesfully stored in the blockchain</p>
+                        <p className="font-medium">
+                          You NFT evolved, refresh metadata in OpenSea to see it.
                         </p>
                       </span>
                     )
@@ -154,11 +156,17 @@ export default function OptionsGroup({ user, options, ballotWithSigner }) {
                 }}
               >
                 <button
-                  onClick={() => handleVote()} // FALTA HANDELEAR EL PASARLE EL CONTRATO CORRECTO.
+                  onClick={() => handleVote()}
                   className="font-semibold w-48 py-2 rounded-lg cursor-pointer
                     bg-[rgba(255,174,0,0.7)] border-[2px] border-[rgb(255,174,0)]/[1] drop-shadow-[0_0_5px_rgba(255,174,0,1)]"
                 >
-                  {voted ? "Voted!" : voting ? "Voting..." : voteError ? "Error" : "Vote"}
+                  {voted
+                    ? "Voted!"
+                    : voting
+                    ? "Voting..."
+                    : voteError
+                    ? "Error. Try Again"
+                    : "Vote"}
                 </button>
               </Tooltip>
             </>
@@ -185,6 +193,8 @@ export default function OptionsGroup({ user, options, ballotWithSigner }) {
     </div>
   );
 }
+
+export default React.memo(OptionsGroup);
 
 function CheckIcon(props) {
   return (
