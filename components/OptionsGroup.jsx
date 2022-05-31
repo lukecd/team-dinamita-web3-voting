@@ -25,7 +25,7 @@ function OptionsGroup({ accountData, loadingAccount, options, ballotWithSigner, 
   };
 
   useEffect(() => {
-    const countDownDate = new Date("May 28, 2022 22:30:00").getTime();
+    const countDownDate = new Date("May 31, 2022 16:45:00").getTime();
     const now = new Date().getTime();
     setTime(Date.now() + (countDownDate - now));
   }, []);
@@ -47,7 +47,7 @@ function OptionsGroup({ accountData, loadingAccount, options, ballotWithSigner, 
           console.log(result);
           setVoted(true);
           setVoteNotif(Math.random() * 2);
-          // router.reload();
+          router.reload();
           setVoteError(null);
         })
         .catch(error => {

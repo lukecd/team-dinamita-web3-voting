@@ -13,7 +13,7 @@ export const proposalsData = [
       {
         name: "second option",
         id: 2,
-        description: "A simplified dcentralized exchange",
+        description: "A simplified decentralized exchange",
         votes: 0,
       },
       {

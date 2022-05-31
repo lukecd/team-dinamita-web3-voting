@@ -10,9 +10,14 @@ import { useAccount, useContract, useProvider, useSigner } from "wagmi";
 import { createBytes } from "../utils/functions.js";
 import bAbi from "../smart-contracts/abi/BallotAbi.json";
 
-const ballot1Address = "0x7529C3E807d35B04241486e52796830eDB20EA8c";
-const ballot2Address = "0xd46f127d31f1BDb5Adb03A8cF363d89a8CBdd04c";
-const ballot3Address = "0x590c8AEE99943Eb65817D461ED1d3c23119aA2F0";
+// const ballot1Address = "0x7529C3E807d35B04241486e52796830eDB20EA8c";
+// const ballot2Address = "0xd46f127d31f1BDb5Adb03A8cF363d89a8CBdd04c";
+// const ballot3Address = "0x590c8AEE99943Eb65817D461ED1d3c23119aA2F0";
+
+const ballot1Address = "0x69542365166a0ae788dd42A79A50BC320dE31E0A";
+const ballot2Address = "0x84e5ecF4C0Be5B138e86F3279c211A4EeEA6f5bd";
+const ballot3Address = "0x8f68F7faa2168eCa0786e50C627A48f0D2Bb5153";
+
 export const ballotAbi = bAbi;
 
 const Index = () => {
