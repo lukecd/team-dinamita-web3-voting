@@ -16,7 +16,7 @@ function OptionsGroup({ accountData, loadingAccount, options, ballotWithSigner, 
 
   const vote = async (optionID, contract) => {
     const data = await contract.vote(optionID, {
-      gasLimit: 5999999,
+      gasLimit: 2999999,
     });
     console.log(data);
     let receipt = await data.wait();
@@ -25,7 +25,7 @@ function OptionsGroup({ accountData, loadingAccount, options, ballotWithSigner, 
   };
 
   useEffect(() => {
-    const countDownDate = new Date("May 31, 2022 16:45:00").getTime();
+    const countDownDate = new Date("May 31, 2022 16:57:00").getTime();
     const now = new Date().getTime();
     setTime(Date.now() + (countDownDate - now));
   }, []);
@@ -47,8 +47,8 @@ function OptionsGroup({ accountData, loadingAccount, options, ballotWithSigner, 
           console.log(result);
           setVoted(true);
           setVoteNotif(Math.random() * 2);
-          router.reload();
           setVoteError(null);
+          router.reload();
         })
         .catch(error => {
           console.log(error);

@@ -7,7 +7,7 @@ export const proposalsData = [
       {
         name: "first option",
         id: 1,
-        description: "A Nft - based game.",
+        description: "A nft based game.",
         votes: 0,
       },
       {
@@ -32,19 +32,19 @@ export const proposalsData = [
       {
         name: "first option",
         id: 1,
-        description: "Learn how to do gas optimizations & estimations",
+        description: "Learn how to do gas optimization and estimation",
         votes: 0,
       },
       {
         name: "second option",
         id: 2,
-        description: "How to use new libraries like Web3Modal, Rainbowkit and Wagmi ",
+        description: "How to use new libraries like Web3Modal, Rainbowkit and Wagmi",
         votes: 0,
       },
       {
         name: "third option",
         id: 3,
-        description: "How to use oracles",
+        description: "More Oracles usage",
         votes: 0,
       },
     ],
@@ -63,7 +63,7 @@ export const proposalsData = [
       {
         name: "second option",
         id: 2,
-        description: "Main-net cryptocurrencies",
+        description: "Main-net cryptocurrencies / NFT's",
         votes: 0,
       },
       {
