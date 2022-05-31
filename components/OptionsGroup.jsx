@@ -25,7 +25,7 @@ function OptionsGroup({ accountData, loadingAccount, options, ballotWithSigner, 
   };
 
   useEffect(() => {
-    const countDownDate = new Date("May 31, 2022 18:57:00").getTime();
+    const countDownDate = new Date("May 31, 2022 17:05:00").getTime();
     const now = new Date().getTime();
     setTime(Date.now() + (countDownDate - now));
   }, []);
