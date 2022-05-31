@@ -5,8 +5,6 @@ import { useContract, useSigner } from "wagmi";
 import nAbi from "../smart-contracts/artifacts/contracts/Web3Citizen.sol/Web3Citizen.json";
 import { Loading } from "@nextui-org/react";
 
-const API_KEY = "Z_ZtzOdwRjDpqbmrKXYR6RrIzoUZPwA4";
-
 const nftAbi = nAbi.abi;
 const nftAddress = "0x4Eed0b565D57DB5D7A103Dc751104e03897cfcA0"; // nft contract
 
@@ -30,7 +28,7 @@ const Header = ({ accountData = undefined, loadingAccount = true, voteNotif }) =
   // get user NFT.
   const fetchNFT = async () => {
     // console.log('fetching nft')
-    const baseURL = `https://polygon-mumbai.g.alchemyapi.io/v2/${API_KEY}/getNFTs/`;
+    const baseURL = `https://polygon-mumbai.g.alchemyapi.io/v2/${process.env.NEXT_PUBLIC_API_KEY}/getNFTs/`;
     var requestOptions = {
       method: "GET",
     };
