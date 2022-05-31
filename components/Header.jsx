@@ -128,6 +128,7 @@ const Header = ({ accountData = undefined, loadingAccount = true, voteNotif }) =
           <a
             className="text-cyan-300"
             target="_blank"
+            rel="noreferrer"
             href={`https://testnets.opensea.io/${accountData?.address}`}
           >
             OpenSea
