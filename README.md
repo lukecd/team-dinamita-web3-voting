@@ -5,6 +5,8 @@ In this project a community can emit a NFT to their members, making them able to
 Each time a member votes on a proposal their NFT evolve. This way, the more active a member is, the more evolved their NFT will be, acting as a proof-of-activity on decisions <br/>
 The NFT-Gated system ensures that members can only vote once, and their have a pseudo "credential" of being part of the community.  <br/>
 The trustless nature of the blockchain ensures that these votations cannot be manipulated, as all the transactions are fully on-chain. <br/>
+<br/>
+https://team-dinamita-web3-voting.vercel.app/
 
 ## How is this build?
 
