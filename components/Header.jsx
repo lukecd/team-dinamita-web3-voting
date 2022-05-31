@@ -146,7 +146,12 @@ const Header = ({ accountData = undefined, loadingAccount = true, voteNotif }) =
         </span> */}
         <p className="text-[1.1rem] 2xl:text-[1.15rem] font-medium mb-4 2xl:mb-8">
           Claim free Mumbai $MATIC to use this dapp:{" "}
-          <a className="text-cyan-400" href="https://faucet.polygon.technology/" target="_blank">
+          <a
+            className="text-cyan-400"
+            href="https://faucet.polygon.technology/"
+            target="_blank"
+            rel="noreferrer"
+          >
             https://faucet.polygon.technology/
           </a>
         </p>
