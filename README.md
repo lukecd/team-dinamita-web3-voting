@@ -1,20 +1,29 @@
 
 ## NFT-Gated voting system & proof-of-activity
 
-A community can emit a NFT for their members, which enables them to vote on proposals, getting empowered to decide things in a secure, decentralized and balanced way. <br/>
+A community can emit a NFT for their members, which enables them to vote on proposals. Empowering the community to decide things in a secure, decentralized and balanced way. <br/>
 
-The NFT-gated system ensures that members can only vote once, everyone have the same votepower and a pseudo "credential" of being part of the community. <br/> 
-Each time a member votes on a proposal their NFT get evolved, representing the number of times the member has voted. This way, the more active a member is, the more evolved their NFT will be, acting as a proof-of-activity <br/>
+The NFT-gated system ensures that members can only vote once, everyone has the same vote power, a pseudo "credential" of being part of the community. <br/> 
+
+Each time a member votes on a proposal their NFT evolves, the design represents the number of times the member has voted. This way, the more active a member is, the more evolved their NFT will be, acting as a proof-of-activity. It's a system designed to encourage civic participation by giving people an easy way to show off how much they participate. <br/>
 
 The NFT credential can be embedded and shared in any website using the alchemy API. <br/>
-The NFT credential can also be used to gate any community activities, allowing only holders to participate. <br/>
+The NFT credential can also be used to gate community activities, allowing only holders to participate. <br/>
 
 The trustless nature of the blockchain ensures that these votations cannot be manipulated, as all the transactions are fully transparent (on-chain). <br/>
 <br/>
 https://team-dinamita-web3-voting.vercel.app/
 
 ## How is this build?
+The NFT uses on-chain SVG data to represent a vote count, each time someone votes, a new color blob is added at a random location. As storing large amounts of SVG data can get expensive, we decided to deploy on the Polygon blockchain as gas costs are way cheaper than on Ethereum. 
+<br/>
+The UI was built using React, Rainbowkit and Tailwind.
+<br/>
+The backend is a group of smart contracts written in Solidity using the Hardhat environment. 
+<br/>
+This was all built as part of the Alchemy Road To Web 3 project. It's a hackathon project built by three guys living in different timezones and on different continents.
 
+https://www.youtube.com/watch?v=veBu03A6ptw&list=PLMj8NvODurfEYLsuiClgikZBGDfhwdcXF
 
 
 ## What we learned doing this project
