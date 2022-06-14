@@ -7,6 +7,8 @@ The NFT-gated system ensures that members can only vote once, everyone has the s
 
 Each time a member votes on a proposal their NFT evolves, the design represents the number of times the member has voted. This way, the more active a member is, the more evolved their NFT will be, acting as a proof-of-activity. It's a system designed to encourage civic participation by giving people an easy way to show off how much they participate. <br/>
 
+<img width="1527" alt="Screen Shot 2565-05-20 at 15 58 50" src="https://user-images.githubusercontent.com/19485391/173496742-7b1f0066-7680-4b9d-9137-064eea10f963.png">
+
 The NFT credential can be embedded and shared in any website using the alchemy API. <br/>
 The NFT credential can also be used to gate community activities, allowing only holders to participate. <br/>
 
