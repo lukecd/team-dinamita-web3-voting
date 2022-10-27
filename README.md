@@ -2,7 +2,7 @@
 
 🏆🏆 WINNER: ALCHEMY ROAD TO WEB 3 HACKATHON 🏆🏆
 
-### About
+# About
 This project was built by three devs on two different continents. Gonzo and Nacho in Latin America and Luke in Asia. The project originally started out as a token-gated voting system and then evolved into a unique experiment in encouraging civic responsibility. People are often quick to join DAOs and online communities, but often their participation peters out over time.
 
 To encourage voting and participation, we created an NFT whose design evolves each time a user votes on a proposal. A simple water-color paint spot is added to the design with each new vote. By displaying their NFT online, it's easy to quickly see who is active and who isn't.
