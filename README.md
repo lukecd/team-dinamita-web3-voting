@@ -1,6 +1,6 @@
 
 
-🏆🏆 WINNER: ALCHEMY ROAD TO WEB 3 HACKATHON 🏆🏆
+# 🏆🏆 WINNER: ALCHEMY ROAD TO WEB 3 HACKATHON 🏆🏆
 
 # About
 This project was built by three devs on two different continents. Gonzo and Nacho in Latin America and Luke in Asia. The project originally started out as a token-gated voting system and then evolved into a unique experiment in encouraging civic responsibility. People are often quick to join DAOs and online communities, but often their participation peters out over time.
